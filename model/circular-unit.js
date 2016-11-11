@@ -6,12 +6,9 @@ Unit = require('./unit.js');
 
 module.exports.getInstance = function (
     id, x, y, speedX, speedY, angle, faction,
-    radius, life, maxLife, statuses
+    radius
 ) {
     var ret = Unit.getInstance(id, x, y, speedX, speedY, angle, faction);
     ret.radius = radius;
-    ret.life = life;
-    ret.maxLife = maxLife;
-    ret.statuses = statuses;
     return ret;
 };
