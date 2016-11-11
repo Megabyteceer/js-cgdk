@@ -1,14 +1,15 @@
 /**
  * Created by Megabyte on 09.11.2016.
  */
-const ActionType = require('./model/action-type.js');
-const BonusType = require('./model/bonus-type.js');
-const BuildingType = require('./model/building-type.js');
-const LaneType = require('./model/lane-type.js');
-const MinionType = require('./model/minion-type.js');
-const ProjectileType = require('./model/projectile-type.js');
-const SkillType = require('./model/skill-type.js');
-const StatusType = require('./model/status-type.js');
+var ActionType = require('./model/action-type.js');
+var BonusType = require('./model/bonus-type.js');
+var BuildingType = require('./model/building-type.js');
+var LaneType = require('./model/lane-type.js');
+var MinionType = require('./model/minion-type.js');
+var ProjectileType = require('./model/projectile-type.js');
+var SkillType = require('./model/skill-type.js');
+var StatusType = require('./model/status-type.js');
+var Faction = require('./model/faction.js');
 
 //static (available between strategies) variables here
 

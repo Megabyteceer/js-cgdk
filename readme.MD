@@ -21,12 +21,12 @@ You can read about contest here http://russianaicup.ru/
 
 7. If ewerything ok, upload your '/my-strategy.js' file here http://russianaicup.ru/submit
 
-#pull requests and issues
+#Pull requests and issues
 
 I had only a couple of days to make this package, please be patient with any errors you'll found.
 Please use this page to report about any mistakes: https://github.com/Megabyteceer/js-cgdk/issues
 
-#what next
+#What next
 Very soon i going to add browser-version launcher to have ability to visualize debug data.
 
 #License
