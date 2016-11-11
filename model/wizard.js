@@ -4,7 +4,7 @@
 
 LivingUnit = require('./living-unit.js');
 
-module.exports.constructor = function (
+module.exports.getInstance = function (
     id, x, y, speedX, speedY, angle, faction,
     radius, life, maxLife, statuses, ownerPlayerId, isMe, mana,
     maxMana, visionRange, castRange, xp, level, skills,
@@ -12,20 +12,20 @@ module.exports.constructor = function (
     messages
 ) {
 
-    LivingUnit.constructor.call(this, id, x, y, speedX, speedY, angle, faction, radius, life, maxLife, statuses);
+    var ret = LivingUnit.getInstance(id, x, y, speedX, speedY, angle, faction, radius, life, maxLife, statuses);
 
-    this.ownerPlayerId = ownerPlayerId;
-    this.isMe = isMe;
-    this.mana = mana;
-    this.maxMana = maxMana;
-    this.visionRange = visionRange;
-    this.castRange = castRange;
-    this.xp = xp;
-    this.level = level;
-    this.skills = skills;
-    this.remainingActionCooldownTicks = remainingActionCooldownTicks;
-    this.remainingCooldownTicksByAction = remainingCooldownTicksByAction;
-    this.isMaster = isMaster;
-    this.messages = messages;
-
+    ret.ownerPlayerId = ownerPlayerId;
+    ret.isMe = isMe;
+    ret.mana = mana;
+    ret.maxMana = maxMana;
+    ret.visionRange = visionRange;
+    ret.castRange = castRange;
+    ret.xp = xp;
+    ret.level = level;
+    ret.skills = skills;
+    ret.remainingActionCooldownTicks = remainingActionCooldownTicks;
+    ret.remainingCooldownTicksByAction = remainingCooldownTicksByAction;
+    ret.isMaster = isMaster;
+    ret.messages = messages;
+    return ret;
 };

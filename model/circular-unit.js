@@ -4,13 +4,14 @@
 
 Unit = require('./unit.js');
 
-module.exports.constructor = function (
+module.exports.getInstance = function (
     id, x, y, speedX, speedY, angle, faction,
     radius, life, maxLife, statuses
 ) {
-    Unit.constructor.call(this, id, x, y, speedX, speedY, angle, faction);
-    this.radius = radius;
-    this.life = life;
-    this.maxLife = maxLife;
-    this.statuses = statuses;
+    var ret = Unit.getInstance(id, x, y, speedX, speedY, angle, faction);
+    ret.radius = radius;
+    ret.life = life;
+    ret.maxLife = maxLife;
+    ret.statuses = statuses;
+    return ret;
 };

@@ -4,8 +4,8 @@
 
 LivingUnit = require('./living-unit.js');
 
-module.exports.constructor = function (
+module.exports.getInstance = function (
     id, x, y, speedX, speedY, angle, faction, radius, life, maxLife, statuses
 ){
-    LivingUnit.constructor.call(this, id, x, y, speedX, speedY, angle, faction, radius, life, maxLife, statuses);
+   return LivingUnit.getInstance(id, x, y, speedX, speedY, angle, faction, radius, life, maxLife, statuses);
 };

@@ -1,7 +1,7 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-module.exports.constructor = function (
+module.exports.getInstance = function (
     randomSeed,  tickCount,  mapSize,  isSkillsEnabled,  isRawMessagesEnabled,
    friendlyFireDamageFactor,  buildingDamageScoreFactor,
    buildingEliminationScoreFactor,  minionDamageScoreFactor,
@@ -40,115 +40,117 @@ module.exports.constructor = function (
    movementBonusFactorPerSkillLevel,  magicalDamageAbsorptionPerSkillLevel
 
 ) {
-    this.randomSeed = randomSeed;
-    this.tickCount = tickCount;
-    this.mapSize = mapSize;
-    this.isSkillsEnabled = isSkillsEnabled;
-    this.isRawMessagesEnabled = isRawMessagesEnabled;
-    this.friendlyFireDamageFactor = friendlyFireDamageFactor;
-    this.buildingDamageScoreFactor = buildingDamageScoreFactor;
-    this.buildingEliminationScoreFactor = buildingEliminationScoreFactor;
-    this.minionDamageScoreFactor = minionDamageScoreFactor;
-    this.minionEliminationScoreFactor = minionEliminationScoreFactor;
-    this.wizardDamageScoreFactor = wizardDamageScoreFactor;
-    this.wizardEliminationScoreFactor = wizardEliminationScoreFactor;
-    this.teamWorkingScoreFactor = teamWorkingScoreFactor;
-    this.victoryScore = victoryScore;
-    this.scoreGainRange = scoreGainRange;
-    this.rawMessageMaxLength = rawMessageMaxLength;
-    this.rawMessageTransmissionSpeed = rawMessageTransmissionSpeed;
-    this.wizardRadius = wizardRadius;
-    this.wizardCastRange = wizardCastRange;
-    this.wizardVisionRange = wizardVisionRange;
-    this.wizardForwardSpeed = wizardForwardSpeed;
-    this.wizardBackwardSpeed = wizardBackwardSpeed;
-    this.wizardStrafeSpeed = wizardStrafeSpeed;
-    this.wizardBaseLife = wizardBaseLife;
-    this.wizardLifeGrowthPerLevel = wizardLifeGrowthPerLevel;
-    this.wizardBaseMana = wizardBaseMana;
-    this.wizardManaGrowthPerLevel = wizardManaGrowthPerLevel;
-    this.wizardBaseLifeRegeneration = wizardBaseLifeRegeneration;
-    this.wizardLifeRegenerationGrowthPerLevel = wizardLifeRegenerationGrowthPerLevel;
-    this.wizardBaseManaRegeneration = wizardBaseManaRegeneration;
-    this.wizardManaRegenerationGrowthPerLevel = wizardManaRegenerationGrowthPerLevel;
-    this.wizardMaxTurnAngle = wizardMaxTurnAngle;
-    this.wizardMaxResurrectionDelayTicks = wizardMaxResurrectionDelayTicks;
-    this.wizardMinResurrectionDelayTicks = wizardMinResurrectionDelayTicks;
-    this.wizardActionCooldownTicks = wizardActionCooldownTicks;
-    this.staffCooldownTicks = staffCooldownTicks;
-    this.magicMissileCooldownTicks = magicMissileCooldownTicks;
-    this.frostBoltCooldownTicks = frostBoltCooldownTicks;
-    this.fireballCooldownTicks = fireballCooldownTicks;
-    this.hasteCooldownTicks = hasteCooldownTicks;
-    this.shieldCooldownTicks = shieldCooldownTicks;
-    this.magicMissileManacost = magicMissileManacost;
-    this.frostBoltManacost = frostBoltManacost;
-    this.fireballManacost = fireballManacost;
-    this.hasteManacost = hasteManacost;
-    this.shieldManacost = shieldManacost;
-    this.staffDamage = staffDamage;
-    this.staffSector = staffSector;
-    this.staffRange = staffRange;
-    this.levelUpXpValues = levelUpXpValues;
-    this.minionRadius = minionRadius;
-    this.minionVisionRange = minionVisionRange;
-    this.minionSpeed = minionSpeed;
-    this.minionMaxTurnAngle = minionMaxTurnAngle;
-    this.minionLife = minionLife;
-    this.factionMinionAppearanceIntervalTicks = factionMinionAppearanceIntervalTicks;
-    this.orcWoodcutterActionCooldownTicks = orcWoodcutterActionCooldownTicks;
-    this.orcWoodcutterDamage = orcWoodcutterDamage;
-    this.orcWoodcutterAttackSector = orcWoodcutterAttackSector;
-    this.orcWoodcutterAttackRange = orcWoodcutterAttackRange;
-    this.fetishBlowdartActionCooldownTicks = fetishBlowdartActionCooldownTicks;
-    this.fetishBlowdartAttackRange = fetishBlowdartAttackRange;
-    this.fetishBlowdartAttackSector = fetishBlowdartAttackSector;
-    this.bonusRadius = bonusRadius;
-    this.bonusAppearanceIntervalTicks = bonusAppearanceIntervalTicks;
-    this.bonusScoreAmount = bonusScoreAmount;
-    this.dartRadius = dartRadius;
-    this.dartSpeed = dartSpeed;
-    this.dartDirectDamage = dartDirectDamage;
-    this.magicMissileRadius = magicMissileRadius;
-    this.magicMissileSpeed = magicMissileSpeed;
-    this.magicMissileDirectDamage = magicMissileDirectDamage;
-    this.frostBoltRadius = frostBoltRadius;
-    this.frostBoltSpeed = frostBoltSpeed;
-    this.frostBoltDirectDamage = frostBoltDirectDamage;
-    this.fireballRadius = fireballRadius;
-    this.fireballSpeed = fireballSpeed;
-    this.fireballExplosionMaxDamageRange = fireballExplosionMaxDamageRange;
-    this.fireballExplosionMinDamageRange = fireballExplosionMinDamageRange;
-    this.fireballExplosionMaxDamage = fireballExplosionMaxDamage;
-    this.fireballExplosionMinDamage = fireballExplosionMinDamage;
-    this.guardianTowerRadius = guardianTowerRadius;
-    this.guardianTowerVisionRange = guardianTowerVisionRange;
-    this.guardianTowerLife = guardianTowerLife;
-    this.guardianTowerAttackRange = guardianTowerAttackRange;
-    this.guardianTowerDamage = guardianTowerDamage;
-    this.guardianTowerCooldownTicks = guardianTowerCooldownTicks;
-    this.factionBaseRadius = factionBaseRadius;
-    this.factionBaseVisionRange = factionBaseVisionRange;
-    this.factionBaseLife = factionBaseLife;
-    this.factionBaseAttackRange = factionBaseAttackRange;
-    this.factionBaseDamage = factionBaseDamage;
-    this.factionBaseCooldownTicks = factionBaseCooldownTicks;
-    this.burningDurationTicks = burningDurationTicks;
-    this.burningSummaryDamage = burningSummaryDamage;
-    this.empoweredDurationTicks = empoweredDurationTicks;
-    this.empoweredDamageFactor = empoweredDamageFactor;
-    this.frozenDurationTicks = frozenDurationTicks;
-    this.hastenedDurationTicks = hastenedDurationTicks;
-    this.hastenedBonusDurationFactor = hastenedBonusDurationFactor;
-    this.hastenedMovementBonusFactor = hastenedMovementBonusFactor;
-    this.hastenedRotationBonusFactor = hastenedRotationBonusFactor;
-    this.shieldedDurationTicks = shieldedDurationTicks;
-    this.shieldedBonusDurationFactor = shieldedBonusDurationFactor;
-    this.shieldedDirectDamageAbsorptionFactor = shieldedDirectDamageAbsorptionFactor;
-    this.auraSkillRange = auraSkillRange;
-    this.rangeBonusPerSkillLevel = rangeBonusPerSkillLevel;
-    this.magicalDamageBonusPerSkillLevel = magicalDamageBonusPerSkillLevel;
-    this.staffDamageBonusPerSkillLevel = staffDamageBonusPerSkillLevel;
-    this.movementBonusFactorPerSkillLevel = movementBonusFactorPerSkillLevel;
-    this.magicalDamageAbsorptionPerSkillLevel = magicalDamageAbsorptionPerSkillLevel;
+    return {
+        randomSeed: randomSeed,
+        tickCount: tickCount,
+        mapSize: mapSize,
+        isSkillsEnabled: isSkillsEnabled,
+        isRawMessagesEnabled: isRawMessagesEnabled,
+        friendlyFireDamageFactor: friendlyFireDamageFactor,
+        buildingDamageScoreFactor: buildingDamageScoreFactor,
+        buildingEliminationScoreFactor: buildingEliminationScoreFactor,
+        minionDamageScoreFactor: minionDamageScoreFactor,
+        minionEliminationScoreFactor: minionEliminationScoreFactor,
+        wizardDamageScoreFactor: wizardDamageScoreFactor,
+        wizardEliminationScoreFactor: wizardEliminationScoreFactor,
+        teamWorkingScoreFactor: teamWorkingScoreFactor,
+        victoryScore: victoryScore,
+        scoreGainRange: scoreGainRange,
+        rawMessageMaxLength: rawMessageMaxLength,
+        rawMessageTransmissionSpeed: rawMessageTransmissionSpeed,
+        wizardRadius: wizardRadius,
+        wizardCastRange: wizardCastRange,
+        wizardVisionRange: wizardVisionRange,
+        wizardForwardSpeed: wizardForwardSpeed,
+        wizardBackwardSpeed: wizardBackwardSpeed,
+        wizardStrafeSpeed: wizardStrafeSpeed,
+        wizardBaseLife: wizardBaseLife,
+        wizardLifeGrowthPerLevel: wizardLifeGrowthPerLevel,
+        wizardBaseMana: wizardBaseMana,
+        wizardManaGrowthPerLevel: wizardManaGrowthPerLevel,
+        wizardBaseLifeRegeneration: wizardBaseLifeRegeneration,
+        wizardLifeRegenerationGrowthPerLevel: wizardLifeRegenerationGrowthPerLevel,
+        wizardBaseManaRegeneration: wizardBaseManaRegeneration,
+        wizardManaRegenerationGrowthPerLevel: wizardManaRegenerationGrowthPerLevel,
+        wizardMaxTurnAngle: wizardMaxTurnAngle,
+        wizardMaxResurrectionDelayTicks: wizardMaxResurrectionDelayTicks,
+        wizardMinResurrectionDelayTicks: wizardMinResurrectionDelayTicks,
+        wizardActionCooldownTicks: wizardActionCooldownTicks,
+        staffCooldownTicks: staffCooldownTicks,
+        magicMissileCooldownTicks: magicMissileCooldownTicks,
+        frostBoltCooldownTicks: frostBoltCooldownTicks,
+        fireballCooldownTicks: fireballCooldownTicks,
+        hasteCooldownTicks: hasteCooldownTicks,
+        shieldCooldownTicks: shieldCooldownTicks,
+        magicMissileManacost: magicMissileManacost,
+        frostBoltManacost: frostBoltManacost,
+        fireballManacost: fireballManacost,
+        hasteManacost: hasteManacost,
+        shieldManacost: shieldManacost,
+        staffDamage: staffDamage,
+        staffSector: staffSector,
+        staffRange: staffRange,
+        levelUpXpValues: levelUpXpValues,
+        minionRadius: minionRadius,
+        minionVisionRange: minionVisionRange,
+        minionSpeed: minionSpeed,
+        minionMaxTurnAngle: minionMaxTurnAngle,
+        minionLife: minionLife,
+        factionMinionAppearanceIntervalTicks: factionMinionAppearanceIntervalTicks,
+        orcWoodcutterActionCooldownTicks: orcWoodcutterActionCooldownTicks,
+        orcWoodcutterDamage: orcWoodcutterDamage,
+        orcWoodcutterAttackSector: orcWoodcutterAttackSector,
+        orcWoodcutterAttackRange: orcWoodcutterAttackRange,
+        fetishBlowdartActionCooldownTicks: fetishBlowdartActionCooldownTicks,
+        fetishBlowdartAttackRange: fetishBlowdartAttackRange,
+        fetishBlowdartAttackSector: fetishBlowdartAttackSector,
+        bonusRadius: bonusRadius,
+        bonusAppearanceIntervalTicks: bonusAppearanceIntervalTicks,
+        bonusScoreAmount: bonusScoreAmount,
+        dartRadius: dartRadius,
+        dartSpeed: dartSpeed,
+        dartDirectDamage: dartDirectDamage,
+        magicMissileRadius: magicMissileRadius,
+        magicMissileSpeed: magicMissileSpeed,
+        magicMissileDirectDamage: magicMissileDirectDamage,
+        frostBoltRadius: frostBoltRadius,
+        frostBoltSpeed: frostBoltSpeed,
+        frostBoltDirectDamage: frostBoltDirectDamage,
+        fireballRadius: fireballRadius,
+        fireballSpeed: fireballSpeed,
+        fireballExplosionMaxDamageRange: fireballExplosionMaxDamageRange,
+        fireballExplosionMinDamageRange: fireballExplosionMinDamageRange,
+        fireballExplosionMaxDamage: fireballExplosionMaxDamage,
+        fireballExplosionMinDamage: fireballExplosionMinDamage,
+        guardianTowerRadius: guardianTowerRadius,
+        guardianTowerVisionRange: guardianTowerVisionRange,
+        guardianTowerLife: guardianTowerLife,
+        guardianTowerAttackRange: guardianTowerAttackRange,
+        guardianTowerDamage: guardianTowerDamage,
+        guardianTowerCooldownTicks: guardianTowerCooldownTicks,
+        factionBaseRadius: factionBaseRadius,
+        factionBaseVisionRange: factionBaseVisionRange,
+        factionBaseLife: factionBaseLife,
+        factionBaseAttackRange: factionBaseAttackRange,
+        factionBaseDamage: factionBaseDamage,
+        factionBaseCooldownTicks: factionBaseCooldownTicks,
+        burningDurationTicks: burningDurationTicks,
+        burningSummaryDamage: burningSummaryDamage,
+        empoweredDurationTicks: empoweredDurationTicks,
+        empoweredDamageFactor: empoweredDamageFactor,
+        frozenDurationTicks: frozenDurationTicks,
+        hastenedDurationTicks: hastenedDurationTicks,
+        hastenedBonusDurationFactor: hastenedBonusDurationFactor,
+        hastenedMovementBonusFactor: hastenedMovementBonusFactor,
+        hastenedRotationBonusFactor: hastenedRotationBonusFactor,
+        shieldedDurationTicks: shieldedDurationTicks,
+        shieldedBonusDurationFactor: shieldedBonusDurationFactor,
+        shieldedDirectDamageAbsorptionFactor: shieldedDirectDamageAbsorptionFactor,
+        auraSkillRange: auraSkillRange,
+        rangeBonusPerSkillLevel: rangeBonusPerSkillLevel,
+        magicalDamageBonusPerSkillLevel: magicalDamageBonusPerSkillLevel,
+        staffDamageBonusPerSkillLevel: staffDamageBonusPerSkillLevel,
+        movementBonusFactorPerSkillLevel: movementBonusFactorPerSkillLevel,
+        magicalDamageAbsorptionPerSkillLevel: magicalDamageAbsorptionPerSkillLevel
+    }
 };

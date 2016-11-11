@@ -1,6 +1,7 @@
 /**
  * Created by Megabyte on 09.11.2016.
  */
+"use strict";
 var ActionType = require('./model/action-type.js');
 var BonusType = require('./model/bonus-type.js');
 var BuildingType = require('./model/building-type.js');
@@ -24,11 +25,10 @@ module.exports.getInstance =function () {
 
 
 
-        move.speed = game.wizardForwardSpeed;
-        move.strafeSpeed = game.wizardStrafeSpeed;
-        move.turn = game.wizardMaxTurnAngle;
-        move.action = ActionType.MagicMissile;
-
+        move.setSpeed(game.wizardForwardSpeed);
+        move.setStrafeSpeed(game.wizardStrafeSpeed);
+        move.setTurn(game.wizardMaxTurnAngle);
+        move.setAction(ActionType.MagicMissile);
 
 
     }

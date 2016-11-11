@@ -23,7 +23,7 @@ var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2]||'127.
 var strategies = [];
 var teamSize;
 var game;
-var MyStrategy = require('./my-strategy.js');
+var MyStrategy = require('./my-strategy-smart-guy.js');
 var Move = require('./model/move.js');
 
 
@@ -61,8 +61,7 @@ function handleGameFrame(playerContext) {
         for (var wizardIndex = 0; wizardIndex < teamSize; ++wizardIndex) {
             var playerWizard = playerWizards[wizardIndex];
 
-            var move = {};
-            Move.constructor.call(move)
+            var move = Move.getInstance();
             moves[wizardIndex] = move;
             if (process.env.DEBUG) {
                 strategies[wizardIndex](playerWizard, playerContext.world, game, move);

@@ -42,7 +42,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         console.log('reader.close called');
         stopped = true;
         client.end();
-    }
+    };
     
     function dataHandler (data) {
 
@@ -442,8 +442,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 							], function readGamef4(secondPart) {
 								firstPart.push(ints);
 								var data = firstPart.concat(secondPart);
-								var game = {};
-								Game.constructor.apply(game, data);
+								var game = Game.getInstance.apply(undefined, data);
 								callback(game);
 							})
 
@@ -488,9 +487,8 @@ module.exports.connect = function connect(host, port, onConnect) {
                 callback(null);
             } else {
                 readWizards(function readPlayerContextf2(wizards){
-                    readWorld(function readPlayerContextf3(worls) {
-                        var playerContext = {};
-                        PlayerContext.constructor.call(playerContext, wizards, worls);
+                    readWorld(function readPlayerContextf3(world) {
+                        var playerContext = PlayerContext.getInstance(wizards, world);
                         callback(playerContext);
                     })
                 })
@@ -549,8 +547,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 readEnum(function readMessagef2(v1) {
                     readEnum(function readMessagef3(v2) {
                         readByteArray(false, function f4(bytes) {
-                            var message = {};
-                            Message.constructor.call(message, v1,v2,bytes);
+                            var message = Message.getInstance.apply(undefined, v1,v2,bytes);
                             callback(message);
                         })
                     })
@@ -591,8 +588,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                                             readMessages(function readWizardf7(messages){
                                                 part2.push(messages);
                                                 var data = part1.concat(part2);
-                                                var wizard = {};
-                                                Wizard.constructor.apply(wizard, data);
+                                                var wizard = Wizard.getInstance.apply(undefined, data);
                                                 callback(wizard);
                                             })
                                         })
@@ -613,8 +609,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 callback(null);
             } else {
                 readSequence(['long', 'enum', 'long', 'long', 'int'], function readStatusf2(data) {
-                    var status = {};
-                    Status.constructor.call(status, data);
+                    var status = Status.getInstance.apply(undefined, data);
                     callback(status);
                 })
             }
@@ -640,8 +635,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                                     readArrayOfElements(readBonus, function readWorldonBonuses(bonuses) {
                                         readArrayOfElements(readBuilding, function readWorldonBuildings(buildings) {
                                             readTrees(function readWorldonTrees(trees) {
-                                                var world = {};
-                                                World.constructor.call(world, part1[0],part1[1],part1[2],part1[3],players,wizards,minions,projectiles,bonuses,buildings,trees);
+                                                var world = World.getInstance(part1[0],part1[1],part1[2],part1[3],players,wizards,minions,projectiles,bonuses,buildings,trees);
                                                 callback(world);
                                             })
                                         })
@@ -664,8 +658,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                     readString(function readPlayerf3(s) {
                         part1.push(s);
                         readSequence(['bool', 'int', 'enum'], function readPlayerf4(part2) {
-                            var player = {};
-                            Player.constructor.apply(player, part1.concat(part2));
+                            var player = Player.getInstance.apply(undefined, part1.concat(part2));
                             callback(player);
                         })
                     })
@@ -687,8 +680,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                     readStatuses(function readMinionf3(statuses) {
                         part1.push(statuses);
                         readSequence(['enum','double', 'int', 'int', 'int'], function f4(part2) {
-                            var minion = {};
-                            Minion.constructor.apply(minion, part1.concat(part2));
+                            var minion = Minion.getInstance.apply(undefined, part1.concat(part2));
                             callback(minion);
                         })
                     })
@@ -706,8 +698,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                     'long', 'double', 'double', 'double', 'double', 'double',
                     'enum', 'double', 'enum', 'long', 'long'
                 ], function readProjectilef2(data) {
-                    var projectile = {};
-                    Projectile.constructor.apply(projectile, data);
+                    var projectile = Projectile.getInstance.apply(undefined, data);
                     callback(projectile);
                 })
             }
@@ -723,8 +714,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                     'long', 'double', 'double', 'double', 'double', 'double',
                     'enum', 'double', 'enum'
                 ], function readBonusf2(data) {
-                    var bonus = {};
-                    Bonus.constructor.apply(bonus, data);
+                    var bonus = Bonus.getInstance.apply(undefined, data);
                     callback(bonus);
                 })
             }
@@ -746,8 +736,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                             'double', 'double', 'int', 'int', 'int'
 
                         ], function readBuildingf4(part2) {
-                            var building = {};
-                            Building.constructor.apply(building, part1.concat(part2));
+                            var building = Building.getInstance.apply(undefined, part1.concat(part2));
                             callback(building);
                         })
                     })
@@ -782,8 +771,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 ], function readTreef2(part1) {
                     readStatuses(function readTreef3(statuses) {
                         part1.push(statuses);
-                        var tree = {};
-                        Tree.constructor.apply(tree, part1);
+                        var tree = Tree.getInstance.apply(undefined, part1);
                         callback(tree);
 
                     })
@@ -798,17 +786,16 @@ module.exports.connect = function connect(host, port, onConnect) {
         }
 
         writeBoolean(true);
-
-        writeDouble(move.speed);
-        writeDouble(move.strafeSpeed);
-        writeDouble(move.turn);
-        writeEnum( move.action);
-        writeDouble(move.castAngle);
-        writeDouble(move.minCastDistance);
-        writeDouble(move.maxCastDistance);
-        writeLong(move.statusTargetId);
-        writeEnum(move.skillToLearn);
-        writeMessages(move.messages);
+        writeDouble(move.getSpeed());
+        writeDouble(move.getStrafeSpeed());
+        writeDouble(move.getTurn());
+        writeEnum( move.getAction());
+        writeDouble(move.getCastAngle());
+        writeDouble(move.getMinCastDistance());
+        writeDouble(move.getMaxCastDistance());
+        writeLong(move.getStatusTargetId());
+        writeEnum(move.getSkillToLearn());
+        writeMessages(move.getMessages());
     }
 
     this.writeMovesMessage = function writeMovesMessage(moves) {

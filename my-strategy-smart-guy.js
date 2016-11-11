@@ -1,6 +1,7 @@
 /**
  * Created by Megabyte on 09.11.2016.
  */
+"use strict";
 var ActionType = require('./model/action-type.js');
 var BonusType = require('./model/bonus-type.js');
 var BuildingType = require('./model/building-type.js');
@@ -40,7 +41,7 @@ module.exports.getInstance =function () {
 	};
     var nextBoolean = function () {
         return (rand()&1) === 0;
-    };;
+    };
 
 
 
@@ -75,7 +76,7 @@ module.exports.getInstance =function () {
 
         // Постоянно двигаемся из-стороны в сторону, чтобы по нам было сложнее попасть.
         // Считаете, что сможете придумать более эффективный алгоритм уклонения? Попробуйте! ;)
-        move.strafeSpeed= (nextBoolean() ? game.wizardStrafeSpeed : -game.wizardStrafeSpeed);
+        move.setStrafeSpeed(nextBoolean() ? game.wizardStrafeSpeed : -game.wizardStrafeSpeed);
 
         // Если осталось мало жизненной энергии, отступаем к предыдущей ключевой точке на линии.
         if (self.life < self.maxLife * LOW_HP_FACTOR) {
@@ -94,14 +95,14 @@ module.exports.getInstance =function () {
                 var angle = self.getAngleTo(nearestTarget);
 
                 // ... то поворачиваемся к цели.
-                move.turn = angle;
+                move.setTurn(angle);
 
                 // Если цель перед нами, ...
                 if (Math.abs(angle) < game.staffSector / 2.0) {
                     // ... то атакуем.
-                    move.action = ActionType.MagicMissile;
-                    move.castAngle = angle;
-                    move.minCastDistance = (distance - nearestTarget.radius + game.magicMissileRadius);
+                    move.setAction(ActionType.MagicMissile);
+                    move.setCastAngle(angle);
+                    move.setMinCastDistance (distance - nearestTarget.radius + game.magicMissileRadius);
                 }
 
                 return;
@@ -113,7 +114,7 @@ module.exports.getInstance =function () {
 
 
 
-    };;
+    };
 
 
     /**
@@ -261,10 +262,10 @@ module.exports.getInstance =function () {
     var goTo = function (point) {
         var angle = self.getAngleTo(point.x, point.y);
 
-        move.turn = angle;
+        move.setTurn(angle);
 
         if (Math.abs(angle) < (game.staffSector / 4.0)) {
-            move.speed = game.wizardForwardSpeed;
+            move.setSpeed(game.wizardForwardSpeed);
         }
     };
 

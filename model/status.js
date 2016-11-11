@@ -1,12 +1,14 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-module.exports.constructor = function (
+module.exports.getInstance = function (
     id, type, wizardId, playerId, remainingDurationTicks
 ) {
-    this.id = id;
-    this.type = type;
-    this.wizardId = wizardId;
-    this.playerId = playerId;
-    this.remainingDurationTicks = remainingDurationTicks;
+    return {
+        id: id,
+        type: type,
+        wizardId: wizardId,
+        playerId: playerId,
+        remainingDurationTicks: remainingDurationTicks
+    }
 };

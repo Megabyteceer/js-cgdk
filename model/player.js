@@ -1,13 +1,15 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-module.exports.constructor = function (
+module.exports.getInstance = function (
     id, isMe, name, isStrategyCrashed, score, faction
 ) {
-    this.id = id;
-    this.isMe = isMe;
-    this.name = name;
-    this.isStrategyCrashed = isStrategyCrashed;
-    this.score = score;
-    this.faction = faction;
+    return {
+        id: id,
+        isMe: isMe,
+        name: name,
+        isStrategyCrashed: isStrategyCrashed,
+        score: score,
+        faction: faction
+    }
 };

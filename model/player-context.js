@@ -1,9 +1,11 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-module.exports.constructor = function (
+module.exports.getInstance = function (
     wizards, world
 ) {
-    this.wizards = wizards;
-    this.world = world;
-}
+    return {
+        wizards: wizards,
+        world: world
+    }
+};
