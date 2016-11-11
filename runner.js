@@ -23,7 +23,7 @@ var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2]||'127.
 var strategies = [];
 var teamSize;
 var game;
-var MyStrategy = require('./my-strategy-smart-guy.js');
+var MyStrategy = require('./my-strategy.js');
 var Move = require('./model/move.js');
 
 
