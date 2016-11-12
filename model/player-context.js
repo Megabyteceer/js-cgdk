@@ -1,11 +1,15 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
+
 module.exports.getInstance = function (
-    wizards, world
+    wizards,
+    world
 ) {
+
     return {
-        wizards: wizards,
-        world: world
-    }
+        wizards : wizards,
+        world   : world
+    };
+    
 };
