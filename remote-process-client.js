@@ -397,7 +397,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 
     this.writeProtocolVersionMessage = function writeProtocolVersionMessage() {
         writeEnum(MessageType.ProtocolVersion);
-        writeInt(1);
+        writeInt(2);
     };
 
     this.readTeamSizeMessage = function readTeamSizeMessage(callback) {
