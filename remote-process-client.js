@@ -517,7 +517,6 @@ module.exports.connect = function connect(host, port, onConnect) {
         readInt(function onReadArrayLen(len) {
 
             if (len < 0) {
-                console.log(len);
                 callback(null);
                 return;
             }
