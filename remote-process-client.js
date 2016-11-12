@@ -498,7 +498,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 
 
 
-    function readArrayOfElements(reader, callback, fixedCount){
+    function readArrayOfElements(reader, callback){
 
         var arrayTargetLen;
         var arrayBuilder;
@@ -514,25 +514,21 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         };
 
-        var onReadCount =  function onReadCount(len) {
-            arrayBuilder = [];
+        readInt(function onReadArrayLen(len) {
+
             if (len < 0) {
                 console.log(len);
                 callback(null);
+                return;
             }
+            arrayBuilder = [];
             if (len === 0) {
                 callback(arrayBuilder);
             } else {
                 arrayTargetLen = len;
                 reader(__ArrayReaderHendler);
             }
-        };
-
-        if (fixedCount) {
-            onReadCount(fixedCount);
-        } else {
-            readInt(onReadCount);
-        }
+        });
     };
 
     function readWizards (callback) {
@@ -634,7 +630,24 @@ module.exports.connect = function connect(host, port, onConnect) {
                                 readArrayOfElements(readProjectile, function readWorldonProjectiles(projectiles) {
                                     readArrayOfElements(readBonus, function readWorldonBonuses(bonuses) {
                                         readArrayOfElements(readBuilding, function readWorldonBuildings(buildings) {
-                                            readTrees(function readWorldonTrees(trees) {
+                                            readArrayOfElements(readTree, function readWorldonTrees(trees) {
+
+                                                if (trees === null) {
+                                                    trees = prevTrees;
+                                                } else {
+                                                    prevTrees = trees;
+                                                }
+                                                if (players === null) {
+                                                    players = prevPlayers;
+                                                } else {
+                                                    prevPlayers = players;
+                                                }
+                                                if (buildings === null) {
+                                                    buildings = prevBuildings;
+                                                } else {
+                                                    prevBuildings = buildings;
+                                                }
+
                                                 var world = World.getInstance(part1[0],part1[1],part1[2],part1[3],players,wizards,minions,projectiles,bonuses,buildings,trees);
                                                 callback(world);
                                             })
@@ -746,19 +759,9 @@ module.exports.connect = function connect(host, port, onConnect) {
     }
 
     var prevTrees;
-    function readTrees (callback) {
-        readInt(function readTreesf1(len) {
-            if(len < 0){
-                callback(prevTrees);
-            } else {
+    var prevPlayers;
+    var prevBuildings;
 
-                readArrayOfElements(readTree,function readTreesf2(trees) {
-                    prevTrees = trees;
-                    callback(trees);
-                }, len);
-            }
-        });
-    };
 
     function readTree (callback) {
         readBool(function readTreef1(val) {

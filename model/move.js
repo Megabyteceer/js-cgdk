@@ -3,6 +3,7 @@
  */
 "use strict";
 var ActionType = require('./action-type.js');
+var Message = require('./message.js');
 module.exports.getInstance = function () {
     var _speed=0;
     var _strafeSpeed=0;
@@ -79,9 +80,13 @@ module.exports.getInstance = function () {
         getSkillToLearn: function () {
             return _skillToLearn;
         },
-        setMessages: function (messages) {
-            if(!Array.isArray(messages)) throw "Wrong value for move.setStatusTargetId: "+messages+"; Array expected";
-            _messages = messages;
+        addMessage: function (lane, skillToLearn, rawMessage /*bytes Array*/) {
+
+
+            if(!_messages){
+                _messages = [];
+            }
+            _messages = Message.getInstance(lane, skillToLearn, rawMessage);
         },
         getMessages: function () {
             return _messages;
@@ -90,3 +95,8 @@ module.exports.getInstance = function () {
     Object.freeze(ret);
     return ret;
 };
+
+function validateMessageByte(b, i) {
+    if(typeof (v)!=='number') throw 'number expected';
+    if(v < 0 || v > 255) throw 'rawMessage element at position '+i+' out of BYTE range (0-255). Value is: '+b;
+}

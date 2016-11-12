@@ -26,9 +26,9 @@ You can read about contest here http://russianaicup.ru/
 I had only a couple of days to make this package, please be patient with any errors you'll found.
 Please use this page to report about any mistakes: https://github.com/Megabyteceer/js-cgdk/issues
 
-#launch parameters
+#launch arguments
 
-node runner.js hostname[default:"127.0.0.1"] port[default:"31001"] auth_id[default:"0000000000000000"] pathtostrategy[default:"my-strategy.js"]
+nodejs runner.js hostname[default:"127.0.0.1"] port[default:"31001"] auth_id[default:"0000000000000000"] pathtostrategy[default:"./my-strategy.js"]
 
 #What next
 Very soon i going to add browser-version launcher to have ability to visualize debug data.
