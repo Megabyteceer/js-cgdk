@@ -30,8 +30,19 @@ Please use this page to report about any mistakes: https://github.com/Megabytece
 
 nodejs runner.js hostname[default:"127.0.0.1"] port[default:"31001"] auth_id[default:"0000000000000000"] pathtostrategy[default:"./my-strategy.js"]
 
-#What next
-Very soon i going to add browser-version launcher to have ability to visualize debug data.
+#how to debug
+
+you can start you strategy in browser with dew-tools you prefer.
+
+1. launch "install-visual-debugger.bat" to download modules;
+
+2. start localRunner;
+
+3. launch "debug-visual.bat". 
+
+New page should be opened and draw batlle. You can open dev-tools (press F-12) and break/debug you strategy source file.
+To custamize drawing edit file "test/public/js/draw-utils.js"
+
 
 #License
 MIT

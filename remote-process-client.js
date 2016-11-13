@@ -192,6 +192,9 @@ module.exports.connect = function connect(host, port, onConnect) {
 
         request.push(callback);
 
+        if (!busy) {
+            dataHandler();
+        }
         /* //callers tracing. Weapon against callbacks-hell
         var a = [];
         var c = arguments.callee;
@@ -203,14 +206,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         callback.callStackDebug = a;*/
 
     };
-    setInterval(function onInterval() {
-        if(stopped){
-            console.log('reader stopped');
-            process.exit();
-        } else if (!busy) {
-            dataHandler();
-        }
-    },10);
+
 
 
     

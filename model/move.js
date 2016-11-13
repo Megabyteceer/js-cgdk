@@ -16,7 +16,7 @@ module.exports.getInstance = function () {
     var _minCastDistance = 0;
     var _maxCastDistance = 10000.0;
     var _statusTargetId  = -1;
-    var _skillToLearn    = null;
+    var _skillToLearn    = 0;
     var _messages        = null;
     
     var ret = {
