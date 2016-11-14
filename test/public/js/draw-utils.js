@@ -154,3 +154,14 @@ function drawProjectile(unit) {
     ctx.fill();
 
 }
+
+function highlightUnit(unit){
+
+	ctx.beginPath();
+    ctx.lineWidth = 5;
+    ctx.arc(unit.x, unit.y, unit.radius+6, 0, Math.PI*2);
+
+    ctx.strokeStyle = '#ee0';
+
+    ctx.stroke();
+}

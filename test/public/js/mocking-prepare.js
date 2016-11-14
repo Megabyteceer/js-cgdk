@@ -26,18 +26,22 @@ var maxPackedProcessed =0;
         }
     });
 
-
+	function doPause(){
+		if (!paused) {
+			playPause();
+		}
+	}
     function playPause() {
         paused = !paused;
         $("#play-stop").text(paused?'▶':'❚❚');
     }
     function prevStep() {
-        paused = true;
+        doPause();
         lastPackedProcessed--;
         processFrame(lastPackedProcessed);
     }
     function nextStep() {
-        paused = true;
+        doPause();
         lastPackedProcessed++;
         processFrame(lastPackedProcessed);
     }
@@ -104,7 +108,7 @@ var maxPackedProcessed =0;
     $("#prev-step").on("click", prevStep);
     $("#next-step").on("click", nextStep);
     $("#re-step").on("click", function () {
-        paused = true;
+        doPause();
         processFrame(lastPackedProcessed);
     });
 
@@ -125,14 +129,15 @@ var maxPackedProcessed =0;
 
 
     captureModuleExports = function captureModuleExports_(destinationName) {
-        var exports = module.exports;
-        Object.defineProperty(window, destinationName, {
-            get: function () {
-                return exports
-            }, set: function (v) {/*skip*/
-            }
-        });
-
+		if (!window[destinationName]) {
+			var exports = module.exports;
+			Object.defineProperty(window, destinationName, {
+				get: function () {
+					return exports
+				}, set: function (v) {/*skip*/
+				}
+			});
+		}
         module.exports ={};
     }
 
@@ -203,6 +208,8 @@ var maxPackedProcessed =0;
                 messages:move.getMessages(),
                 packetNum:data.packetNum
             };
+			
+			if(objectMoveToSend.speed===null)throw 'wrong value';
             lastPackedProcessed = data.packetNum;
             maxPackedProcessed = Math.max(lastPackedProcessed, maxPackedProcessed);
             status.text('step: '+lastPackedProcessed);
@@ -211,8 +218,11 @@ var maxPackedProcessed =0;
                 type: "POST",
                 url: '/move',
                 data: JSON.stringify(objectMoveToSend),
-                success: function () {
-
+                success: function (d) {
+					if (d) {
+						alert(d);
+						doPause();
+					}
                 },
                 contentType: "application/json; charset=utf-8"
             });

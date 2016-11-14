@@ -66,22 +66,31 @@ app.post('/move', function (req, res) {
 
     if (currentPacket === req.body.packetNum) {
         currentPacket++;
+		
+		
         var move = Move.getInstance();
-        move.setSpeed(req.body.speed);
-        move.setStrafeSpeed(req.body.strafeSpeed);
-        move.setTurn(req.body.turn);
-        move.setAction(req.body.action);
-        move.setCastAngle(req.body.castAngle);
-        move.setMinCastDistance(req.body.minCastDistance);
-        move.setMaxCastDistance(req.body.maxCastDistance);
-        move.setStatusTargetId(req.body.statusTargetId);
-        move.setSkillToLearn(req.body.skillToLearn);
-        if (req.body.messages) {
-            req.body.messages.some(function (m) {
-                move.addMessage(m.lane, m._skillToLearn, m.rawMessage);
-            });
-        }
-
+		try {
+			move.setSpeed(req.body.speed);
+			move.setStrafeSpeed(req.body.strafeSpeed);
+			move.setTurn(req.body.turn);
+			move.setAction(req.body.action);
+			move.setCastAngle(req.body.castAngle);
+			move.setMinCastDistance(req.body.minCastDistance);
+			move.setMaxCastDistance(req.body.maxCastDistance);
+			move.setStatusTargetId(req.body.statusTargetId);
+			move.setSkillToLearn(req.body.skillToLearn);
+			if (req.body.messages) {
+				req.body.messages.some(function (m) {
+					move.addMessage(m.lane, m._skillToLearn, m.rawMessage);
+				});
+			}
+		} catch (e) {
+			res.write('Wrong move object:');
+			res.write(JSON.stringify(req.body));
+			console.log(e.message);
+			console.log(JSON.stringify(req.body));
+			var move = Move.getInstance();
+		}
         packetsGetterCallback(move);
     }
     res.end();
