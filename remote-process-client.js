@@ -19,7 +19,6 @@ const SkillType = require('./model/skill-type.js');
 
 module.exports.connect = function connect(host, port, onConnect) {
 
-    var stopped = false;
 
     const net = require('net');
 
@@ -38,12 +37,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 
     client.setNoDelay();
 
-    this.close = function close() {
-        console.log('reader.close called');
-        stopped = true;
-        client.end();
-    };
-    
+
     function dataHandler (data) {
 
         if (data) {
@@ -171,19 +165,21 @@ module.exports.connect = function connect(host, port, onConnect) {
 
     client.on('data', dataHandler);
     client.on('error', function onError(e) {
-        stopped = true;
+
         console.log("SOCKET ERROR: "+e.message);
+        process.exit(1);
     });
 
 
     client.on('close', function onClose() {
-        stopped = true;
         console.log('server closed connection.');
+        process.exit(1);
     });
 
     client.on('end', function onEnd() {
-        stopped = true;
+
         console.log('disconnected from server');
+        process.exit(1);
     });
 
     var readSequence = function readSequence(a,callback) {
@@ -470,14 +466,12 @@ module.exports.connect = function connect(host, port, onConnect) {
 
     this.readPlayerContextMessage = function readPlayerContextMessage(callback) {
 
-        if(stopped){
-            callback(null);
-        }
+
 
         readEnum(function readPlayerContextMessagef1(messageType) {
 
             if (messageType === MessageType.GameOver) {
-                callback(null);
+                process.exit(0);
             } else {
                 ensureMessageType(messageType, MessageType.PlayerContext);
                 readPlayerContext(callback);

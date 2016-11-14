@@ -26,13 +26,12 @@ var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2]||'127.
 var strategies = [];
 var teamSize;
 var game;
-var MyStrategy = require(process.argv[5] || './my-strategy.js');
+var MyStrategy = require(process.argv[5] || './megabyte-strategy.js');
 var Move = require('./model/move.js');
 
 var isCallbackedStrategy = false;
 
 var moves;
-var stop = false;
 
 function run() {
     remoteProcessClient.writeTokenMessage(token);
@@ -56,10 +55,14 @@ function run() {
 
 function handleGameFrame(playerContext) {
 
+    if (!playerContext) {
+        process.exit(1);
+    }
     var playerWizards = playerContext.wizards;
 
     if (playerWizards == null || playerWizards.length != teamSize) {
-        stop = true;
+        console.log('wrong wizzards count');
+        process.exit(1);
     } else {
 
 
@@ -82,7 +85,7 @@ function handleGameFrame(playerContext) {
                     callStrategy(wizardIndex, playerWizard, playerContext.world, game, move);
                 } catch (e) {
                     console.log('ERROR: '+e.message);
-                    stop = true;
+                    process.exit(1);
                 }
             }
 
@@ -94,15 +97,8 @@ function handleGameFrame(playerContext) {
 }
 
 function afterAllStrategyProcessed() {
-
-    if (stop) {
-        remoteProcessClient.close();
-        console.log('runner stopped');
-        process.exit();
-    } else {
-        remoteProcessClient.writeMovesMessage(moves);
-        remoteProcessClient.readPlayerContextMessage(handleGameFrame);
-    }
+    remoteProcessClient.writeMovesMessage(moves);
+    remoteProcessClient.readPlayerContextMessage(handleGameFrame);
 }
 
 var callBackCount;
