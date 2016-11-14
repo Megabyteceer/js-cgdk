@@ -26,7 +26,7 @@ var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2]||'127.
 var strategies = [];
 var teamSize;
 var game;
-var MyStrategy = require(process.argv[5] || './megabyte-strategy.js');
+var MyStrategy = require(process.argv[5] || './my-strategy.js');
 var Move = require('./model/move.js');
 
 var isCallbackedStrategy = false;
