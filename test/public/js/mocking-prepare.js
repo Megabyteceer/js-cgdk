@@ -10,8 +10,104 @@ function require(name) {
 
 var captureModuleExports;
 
+var paused;
+var lastPackedProcessed;
+var maxPackedProcessed =0;
+
 (function () {
     var game;
+
+    var status = $('#satus');
+    status.on("click",function () {
+        var f = prompt('Enter frame to go [0-'+maxPackedProcessed+']:');
+        if (parseInt(f).toString() === f) {
+            lastPackedProcessed = Math.max(0, Math.min(maxPackedProcessed, parseInt(f)));
+            processFrame(lastPackedProcessed);
+        }
+    });
+
+
+    function playPause() {
+        paused = !paused;
+        $("#play-stop").text(paused?'▶':'❚❚');
+    }
+    function prevStep() {
+        paused = true;
+        lastPackedProcessed--;
+        processFrame(lastPackedProcessed);
+    }
+    function nextStep() {
+        paused = true;
+        lastPackedProcessed++;
+        processFrame(lastPackedProcessed);
+    }
+
+    function zoomIn() {
+        zoom *= 1.3333333;
+        localStorage.setItem('zoom',zoom);
+        if (paused) {
+            processFrame(lastPackedProcessed);
+        }
+    }
+    function zoomOut() {
+        zoom /= 1.3333333;
+        localStorage.setItem('zoom',zoom);
+        if (paused) {
+            processFrame(lastPackedProcessed);
+        }
+    }
+
+    $(document).keypress(function (e) {
+        switch (e.keyCode){
+            case 1073:
+            case 44: prevStep(); break;
+            case 1102:
+            case 46: nextStep(); break;
+            case 32: playPause(); break;
+        }
+    });
+
+    var px,py;
+    var pressed;
+    $('#debug-canvas').mousemove(function (e) {
+       if (pressed) {
+           cameraLinked = false;
+           cameraX += (e.clientX-px)/zoom;
+           cameraY += (e.clientY-py)/zoom;
+           if (paused) {
+               processFrame(lastPackedProcessed);
+           }
+           px = e.clientX;
+           py = e.clientY;
+       }
+        
+    });
+
+    $('#debug-canvas').mousedown(function (e) {
+        pressed = true;
+        px = e.clientX;
+        py = e.clientY;
+    });
+    $('#debug-canvas').mouseup(function (e) {
+        pressed = false;
+    });
+
+
+
+    $("#link-camera").on("click", function () {
+        cameraLinked = true;
+    });
+    
+    $("#zoom-in").on("click", zoomIn);
+    $("#zoom-out").on("click", zoomOut);
+    $("#play-stop").on("click", playPause);
+    $("#prev-step").on("click", prevStep);
+    $("#next-step").on("click", nextStep);
+    $("#re-step").on("click", function () {
+        paused = true;
+        processFrame(lastPackedProcessed);
+    });
+
 
 
     function getParameterByName(name, url) {
@@ -45,15 +141,23 @@ var captureModuleExports;
         if (window.hasOwnProperty('Strategy')) {
             strategy = window.Strategy.getInstance();
             clearInterval(initInterval);
-            setInterval(processFrame,1);
+            setInterval(function(){
+                if (!paused) {
+                    processFrame();
+                }
+            },1);
         }
     }, 100);
 
     var busy;
-    function processFrame() {
+    function processFrame(packetNum) {
+
+        if (!packetNum) {
+            packetNum = -1;
+        }
         if(busy)return;
         busy = true;
-        $.getJSON('packet.JSON/-1', function (data) {
+        $.getJSON('packet.JSON/'+packetNum, function (data) {
 
             if (data === 'close-window') {
                 return;
@@ -99,8 +203,9 @@ var captureModuleExports;
                 messages:move.getMessages(),
                 packetNum:data.packetNum
             };
-
-
+            lastPackedProcessed = data.packetNum;
+            maxPackedProcessed = Math.max(lastPackedProcessed, maxPackedProcessed);
+            status.text('step: '+lastPackedProcessed);
 
             $.ajax({
                 type: "POST",
@@ -115,6 +220,10 @@ var captureModuleExports;
         });
 
     };
+
+
+
+
 
 
     function parseWizard(data) {

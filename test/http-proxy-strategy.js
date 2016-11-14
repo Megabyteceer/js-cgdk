@@ -28,15 +28,15 @@ app.use('/js',express.static(__dirname+'/public/js'));
 app.use('/js',express.static(__dirname+'/..'));
 app.use('/js',express.static(__dirname+'/../node_modules/jquery/dist'));
 
-app.get('/', function(req, res){
-    res.sendFile('mock.html', { root: __dirname + "/public/" } );
+app.get('/', function(req, res) {
+    if (localRunnerConnected) {
+        res.sendFile('mock.html', { root: __dirname + "/public/" } );
+    } else {
+        res.sendFile('local-runner-not-connected.html', { root: __dirname + "/public/" } );
+    }
+    
 });
 
-/*
-app.get('/js/my-strategy.js', function(req, res){
-    res.sendFile(__dirname+'/my-strategy.js');
-});
-*/
 
 
 var responseObject;
@@ -45,8 +45,8 @@ function answerPacket() {
 
     var pn = (requestedPacket>=0)?requestedPacket:currentPacket;
 
-    if (packetsToProcess[pn]) {
-        responseObject.end(JSON.stringify(packetsToProcess[pn]));
+    if (jsonPpacketsToProcess[pn]) {
+        responseObject.end(jsonPpacketsToProcess[pn]);
     } else {
         setTimeout(answerPacket, 1);
     }
@@ -63,35 +63,37 @@ app.get('/packet.JSON/:packetNum', function (req, res) {
 
 
 app.post('/move', function (req, res) {
-    currentPacket = Math.max(currentPacket, req.body.packetNum+1);
 
-    var move = Move.getInstance();
-    move.setSpeed(req.body.speed);
-    move.setStrafeSpeed(req.body.strafeSpeed);
-    move.setTurn(req.body.turn);
-    move.setAction(req.body.action);
-    move.setCastAngle(req.body.castAngle);
-    move.setMinCastDistance(req.body.minCastDistance);
-    move.setMaxCastDistance(req.body.maxCastDistance);
-    move.setStatusTargetId(req.body.statusTargetId);
-    move.setSkillToLearn(req.body.skillToLearn);
-    if (req.body.messages) {
-        req.body.messages.some(function (m) {
-            move.addMessage(m.lane, m._skillToLearn, m.rawMessage);
-        });
+    if (currentPacket === req.body.packetNum) {
+        currentPacket++;
+        var move = Move.getInstance();
+        move.setSpeed(req.body.speed);
+        move.setStrafeSpeed(req.body.strafeSpeed);
+        move.setTurn(req.body.turn);
+        move.setAction(req.body.action);
+        move.setCastAngle(req.body.castAngle);
+        move.setMinCastDistance(req.body.minCastDistance);
+        move.setMaxCastDistance(req.body.maxCastDistance);
+        move.setStatusTargetId(req.body.statusTargetId);
+        move.setSkillToLearn(req.body.skillToLearn);
+        if (req.body.messages) {
+            req.body.messages.some(function (m) {
+                move.addMessage(m.lane, m._skillToLearn, m.rawMessage);
+            });
+        }
+
+        packetsGetterCallback(move);
     }
-
-    packetsGetterCallback(move);
     res.end();
 })
 
 app.listen(PORT, function () {
     console.log('Example app listening on port '+PORT+'!');
-    //console.log('To start visual debugging open this url in your contemporary browser: http://localhost:'+PORT);
+    console.log('To start visual debugging open this url in your contemporary browser: http://localhost:'+PORT);
     urlOpener('http://localhost:'+PORT);
 });
 
-var packetsToProcess = [];
+var jsonPpacketsToProcess = [];
 var packetsGetterCallback;
 
 module.exports.getInstance =function () {
@@ -100,11 +102,16 @@ module.exports.getInstance =function () {
         packetsGetterCallback = callback;
 
         var packetToProcess = {
-            packetNum:packetsToProcess.length,
+            packetNum:jsonPpacketsToProcess.length,
             self:self,
             world:world,
             game:game
         };
-        packetsToProcess.push(packetToProcess);
+        jsonPpacketsToProcess.push(JSON.stringify(packetToProcess));
     }
 };
+
+var localRunnerConnected;
+module.exports.onLocalRunnerConnected = function() {
+    localRunnerConnected = true;
+}

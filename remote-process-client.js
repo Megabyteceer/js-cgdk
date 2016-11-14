@@ -67,6 +67,13 @@ module.exports.connect = function connect(host, port, onConnect) {
 
         while (!tooSmall && (request.length>0)) {
 
+            //network problems imitation
+            /*
+            if (len>0 && Math.random()>0.995) {
+
+                setTimeout(dataHandler, 100);
+                break;
+            }//*/
 
             if(typeof (pos) === 'undefined') throw 'error';
 
@@ -143,7 +150,9 @@ module.exports.connect = function connect(host, port, onConnect) {
 
             if (!tooSmall) {
                 request.shift();
+
             }
+
         }
 
         if (len > 0) {

@@ -8,6 +8,9 @@ var RemoteProcessClient = require('./remote-process-client.js');
 
 var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2]||'127.0.0.1', process.argv[3]||31001, function onServerConnect() {
 
+    if (MyStrategy.onLocalRunnerConnected) {
+        MyStrategy.onLocalRunnerConnected();
+    }
 
     if(process.env.DEBUG){
         run();
