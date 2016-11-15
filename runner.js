@@ -18,7 +18,8 @@ var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2]||'127.
         try {
             run();
         } catch (e) {
-            console.log('INITIALIZATIN ERROR: '+e.message);
+            console.log('INITIALIZATION ERROR: '+e.message);
+            process.exit(1);
         }
     }
 });
@@ -61,7 +62,7 @@ function handleGameFrame(playerContext) {
     var playerWizards = playerContext.wizards;
 
     if (playerWizards == null || playerWizards.length != teamSize) {
-        console.log('wrong wizzards count');
+        console.log('wrong wizards count');
         process.exit(1);
     } else {
 

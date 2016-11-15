@@ -3,7 +3,7 @@
  */
 "use strict";
 
-var module = {exports:{}};
+var module = {exports: {}};
 function require(name) {
     /*mocked*/
 }
@@ -12,34 +12,37 @@ var captureModuleExports;
 
 var paused;
 var lastPackedProcessed;
-var maxPackedProcessed =0;
+var maxPackedProcessed = 0;
 
 (function () {
     var game;
 
-    var status = $('#satus');
-    status.on("click",function () {
-        var f = prompt('Enter frame to go [0-'+maxPackedProcessed+']:');
+    var status = $('#status');
+    status.on("click", function () {
+        var f = prompt('Enter frame to go [0-' + maxPackedProcessed + ']:');
         if (parseInt(f).toString() === f) {
             lastPackedProcessed = Math.max(0, Math.min(maxPackedProcessed, parseInt(f)));
             processFrame(lastPackedProcessed);
         }
     });
 
-	function doPause(){
-		if (!paused) {
-			playPause();
-		}
-	}
+    function doPause() {
+        if (!paused) {
+            playPause();
+        }
+    }
+
     function playPause() {
         paused = !paused;
-        $("#play-stop").text(paused?'▶':'❚❚');
+        $("#play-stop").text(paused ? '▶' : '❚❚');
     }
+
     function prevStep() {
         doPause();
         lastPackedProcessed--;
         processFrame(lastPackedProcessed);
     }
+
     function nextStep() {
         doPause();
         lastPackedProcessed++;
@@ -48,60 +51,67 @@ var maxPackedProcessed =0;
 
     function zoomIn() {
         zoom *= 1.3333333;
-        localStorage.setItem('zoom',zoom);
+        localStorage.setItem('zoom', zoom);
         if (paused) {
             processFrame(lastPackedProcessed);
         }
     }
+
     function zoomOut() {
         zoom /= 1.3333333;
-        localStorage.setItem('zoom',zoom);
+        localStorage.setItem('zoom', zoom);
         if (paused) {
             processFrame(lastPackedProcessed);
         }
     }
 
     $(document).keypress(function (e) {
-        switch (e.keyCode){
+        switch (e.keyCode) {
             case 1073:
-            case 44: prevStep(); break;
+            case 44:
+                prevStep();
+                break;
             case 1102:
-            case 46: nextStep(); break;
-            case 32: playPause(); break;
+            case 46:
+                nextStep();
+                break;
+            case 32:
+                playPause();
+                break;
         }
     });
 
-    var px,py;
+    var px, py;
     var pressed;
-    $('#debug-canvas').mousemove(function (e) {
-       if (pressed) {
-           cameraLinked = false;
-           cameraX += (e.clientX-px)/zoom;
-           cameraY += (e.clientY-py)/zoom;
-           if (paused) {
-               processFrame(lastPackedProcessed);
-           }
-           px = e.clientX;
-           py = e.clientY;
-       }
-        
+    var $canvas = $('#debug-canvas');
+    $canvas.mousemove(function (e) {
+        if (pressed) {
+            cameraLinked = false;
+            cameraX += (e.clientX - px) / zoom;
+            cameraY += (e.clientY - py) / zoom;
+            if (paused) {
+                processFrame(lastPackedProcessed);
+            }
+            px = e.clientX;
+            py = e.clientY;
+        }
+
     });
 
-    $('#debug-canvas').mousedown(function (e) {
+    $canvas.mousedown(function (e) {
         pressed = true;
         px = e.clientX;
         py = e.clientY;
     });
-    $('#debug-canvas').mouseup(function (e) {
+    $canvas.mouseup(function (e) {
         pressed = false;
     });
-
 
 
     $("#link-camera").on("click", function () {
         cameraLinked = true;
     });
-    
+
     $("#zoom-in").on("click", zoomIn);
     $("#zoom-out").on("click", zoomOut);
     $("#play-stop").on("click", playPause);
@@ -111,7 +121,6 @@ var maxPackedProcessed =0;
         doPause();
         processFrame(lastPackedProcessed);
     });
-
 
 
     function getParameterByName(name, url) {
@@ -127,42 +136,43 @@ var maxPackedProcessed =0;
     }
 
 
-
     captureModuleExports = function captureModuleExports_(destinationName) {
-		if (!window[destinationName]) {
-			var exports = module.exports;
-			Object.defineProperty(window, destinationName, {
-				get: function () {
-					return exports
-				}, set: function (v) {/*skip*/
-				}
-			});
-		}
-        module.exports ={};
-    }
+        if (!window[destinationName]) {
+            var exports = module.exports;
+            Object.defineProperty(window, destinationName, {
+                get: function () {
+                    return exports
+                },
+                set: function (v) {/*skip*/
+                }
+            });
+        }
+        module.exports = {};
+    };
 
     var strategy;
     var initInterval = setInterval(function () {
         if (window.hasOwnProperty('Strategy')) {
             strategy = window.Strategy.getInstance();
             clearInterval(initInterval);
-            setInterval(function(){
+            setInterval(function () {
                 if (!paused) {
                     processFrame();
                 }
-            },1);
+            }, 1);
         }
     }, 100);
 
     var busy;
+
     function processFrame(packetNum) {
 
         if (!packetNum) {
             packetNum = -1;
         }
-        if(busy)return;
+        if (busy)return;
         busy = true;
-        $.getJSON('packet.JSON/'+packetNum, function (data) {
+        $.getJSON('packet.JSON/' + packetNum, function (data) {
 
             if (data === 'close-window') {
                 return;
@@ -191,50 +201,45 @@ var maxPackedProcessed =0;
             var move = Move.getInstance();
 
             drawMap(self, world);
-            
+
             strategy(self, world, game, move);
 
 
             var objectMoveToSend = {
-                speed:move.getSpeed(),
-                strafeSpeed:move.getStrafeSpeed(),
-                turn:move.getTurn(),
-                action:move.getAction(),
-                castAngle:move.getCastAngle(),
-                minCastDistance:move.getMinCastDistance(),
-                maxCastDistance:move.getMaxCastDistance(),
-                statusTargetId:move.getStatusTargetId(),
-                skillToLearn:move.getSkillToLearn(),
-                messages:move.getMessages(),
-                packetNum:data.packetNum
+                speed: move.getSpeed(),
+                strafeSpeed: move.getStrafeSpeed(),
+                turn: move.getTurn(),
+                action: move.getAction(),
+                castAngle: move.getCastAngle(),
+                minCastDistance: move.getMinCastDistance(),
+                maxCastDistance: move.getMaxCastDistance(),
+                statusTargetId: move.getStatusTargetId(),
+                skillToLearn: move.getSkillToLearn(),
+                messages: move.getMessages(),
+                packetNum: data.packetNum
             };
-			
-			if(objectMoveToSend.speed===null)throw 'wrong value';
+
+            if (objectMoveToSend.speed === null)throw 'wrong value';
             lastPackedProcessed = data.packetNum;
             maxPackedProcessed = Math.max(lastPackedProcessed, maxPackedProcessed);
-            status.text('step: '+lastPackedProcessed);
+            status.text('step: ' + lastPackedProcessed);
 
             $.ajax({
                 type: "POST",
                 url: '/move',
                 data: JSON.stringify(objectMoveToSend),
                 success: function (d) {
-					if (d) {
-						alert(d);
-						doPause();
-					}
+                    if (d) {
+                        alert(d);
+                        doPause();
+                    }
                 },
                 contentType: "application/json; charset=utf-8"
             });
-            
+
         });
 
-    };
-
-
-
-
-
+    }
 
     function parseWizard(data) {
         if (!data) return null;
@@ -248,7 +253,7 @@ var maxPackedProcessed =0;
             data.faction,
             data.radius,
             data.life,
-            data. maxLife,
+            data.maxLife,
             data.statuses,
 
             data.ownerPlayerId,
@@ -265,7 +270,8 @@ var maxPackedProcessed =0;
             data.isMaster,
             data.messages
         );
-    };
+    }
+
     function parseTree(data) {
         if (!data) return null;
         return Tree.getInstance(
@@ -281,7 +287,7 @@ var maxPackedProcessed =0;
             data.maxLife,
             data.statuses
         );
-    };
+    }
 
     function parseProjectile(data) {
         if (!data) return null;
@@ -298,9 +304,9 @@ var maxPackedProcessed =0;
             data.type,
             data.ownerUnitId,
             data.ownerPlayerId
-
         );
-    };
+    }
+
     function parsePlayer(data) {
         if (!data) return null;
         return Player.getInstance(
@@ -310,9 +316,9 @@ var maxPackedProcessed =0;
             data.isStrategyCrashed,
             data.score,
             data.faction
-
         );
-    };
+    }
+
     function parseMinion(data) {
         if (!data) return null;
         return Minion.getInstance(
@@ -327,9 +333,9 @@ var maxPackedProcessed =0;
             data.life,
             data.maxLife,
             data.statuses
-
         );
-    };
+    }
+
     function parseBuilding(data) {
         if (!data) return null;
         return Building.getInstance(
@@ -351,9 +357,8 @@ var maxPackedProcessed =0;
             data.damage,
             data.cooldownTicks,
             data.remainingActionCooldownTicks
-
         );
-    };
+    }
 
     function parseBonus(data) {
         if (!data) return null;
@@ -368,18 +373,6 @@ var maxPackedProcessed =0;
             data.radius,
 
             data.type
-
         );
-    };
-
-
-
-
-
-
-
-
-
-
-
+    }
 })();

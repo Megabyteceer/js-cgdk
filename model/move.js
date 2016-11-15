@@ -88,7 +88,7 @@ module.exports.getInstance = function () {
             if(!_messages){
                 _messages = [];
             }
-            _messages = Message.getInstance(lane, skillToLearn, rawMessage);
+            _messages.push(Message.getInstance(lane, skillToLearn, rawMessage));
         },
         getMessages: function () {
             return _messages;

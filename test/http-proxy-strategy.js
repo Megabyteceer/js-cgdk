@@ -94,7 +94,7 @@ app.post('/move', function (req, res) {
         packetsGetterCallback(move);
     }
     res.end();
-})
+});
 
 app.listen(PORT, function () {
     console.log('Example app listening on port '+PORT+'!');
@@ -123,4 +123,4 @@ module.exports.getInstance =function () {
 var localRunnerConnected;
 module.exports.onLocalRunnerConnected = function() {
     localRunnerConnected = true;
-}
+};

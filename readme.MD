@@ -1,6 +1,6 @@
 #About
 
-js-cgdk - is a javascript language connector to atamp in Russia Ai Code Cup 2016.
+js-cgdk - is a javascript language package for Russia Ai Code Cup 2016.
 You can read about contest here http://russianaicup.ru/
 
 
@@ -13,13 +13,13 @@ You can read about contest here http://russianaicup.ru/
 3. Install nodejs runtime 6.9.1 https://nodejs.org/en/
 
 
-4. Edit 'move' function in '/my-strategy.js' file as you want to tur it in to powerfull AI.
+4. Edit 'move' function in '/my-strategy.js' file as you want to tur it in to powerful AI.
 
 5. Launch localRunner by double click on local-runner-sync.bat
 
 6. Launch your strategy by double click on run.bat file.
 
-7. If ewerything ok, upload your '/my-strategy.js' file here http://russianaicup.ru/submit
+7. If everything ok, upload your '/my-strategy.js' file here http://russianaicup.ru/submit
 
 #Pull requests and issues
 
@@ -28,7 +28,7 @@ Please use this page to report about any mistakes: https://github.com/Megabytece
 
 #launch arguments
 
-nodejs runner.js hostname[default:"127.0.0.1"] port[default:"31001"] auth_id[default:"0000000000000000"] pathtostrategy[default:"./my-strategy.js"]
+nodejs runner.js hostname[default:"127.0.0.1"] port[default:"31001"] auth_id[default:"0000000000000000"] path-to-strategy[default:"./my-strategy.js"]
 
 #how to debug
 
@@ -40,8 +40,8 @@ you can start you strategy in browser with dew-tools you prefer.
 
 3. launch "debug-visual.bat". 
 
-New page should be opened and draw batlle. You can open dev-tools (press F-12) and break/debug you strategy source file.
-To custamize drawing edit file "test/public/js/draw-utils.js"
+New page should be opened and draw battle. You can open dev-tools (press F-12) and break/debug you strategy source file.
+To customize drawing edit file "test/public/js/draw-utils.js"
 
 
 #License

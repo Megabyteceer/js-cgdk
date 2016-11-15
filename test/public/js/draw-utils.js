@@ -18,7 +18,7 @@ var cameraLinked = true;
     var onResize = function () {
         ctx.canvas.width = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
-    }
+    };
     window.addEventListener("resize", onResize);
     onResize();
     

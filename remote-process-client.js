@@ -161,8 +161,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 
         busy = false;
 
-    };
-
+    }
     client.on('data', dataHandler);
     client.on('error', function onError(e) {
 
@@ -179,7 +178,7 @@ module.exports.connect = function connect(host, port, onConnect) {
     client.on('end', function onEnd() {
 
         console.log('disconnected from server');
-        process.exit(1);
+        process.exit();
     });
 
     var readSequence = function readSequence(a,callback) {
@@ -219,34 +218,28 @@ module.exports.connect = function connect(host, port, onConnect) {
         readSequence('enum', function onEnumReaded(a) {
             callback(a[0]);
         });
-    };
-
+    }
     function readBool(callback) {
         readSequence('bool',  function onBoolReaded(a) {
 
             callback(a[0]);
         });
-    };
-
+    }
     function  readInt(callback) {
         readSequence('int',  function onIntReaded(a) {
             callback(a[0]);
         });
-    };
-
+    }
     function  readLong(callback) {
         readSequence('long',  function onLongReaded(a) {
             callback(a[0]);
         });
-    };
+    }
     function readDouble(callback) {
         readSequence('double',  function omDoubleReaded(a) {
             callback(a[0]);
         });
-    };
-
-
-
+    }
     function readFixedByteArray(len, callback) {
 
         if(len > 100) {
@@ -256,8 +249,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         readSequence(len,  function onFixedByteArrayReaded(a) {
             callback(a[0]);
         });
-    };
-
+    }
     function readByteArray(nullable, callback) {
         console.log('readByteArray: '+arguments.callee.name);
 
@@ -288,30 +280,22 @@ module.exports.connect = function connect(host, port, onConnect) {
                 });
             }
         });
-    };
-
+    }
     function readEnums(enumType, callback) {
         readArrayOfElements(readEnum, function onEnumsReaded(a) {
             a.some(enumType.validate);
             callback(a);
         });
-    };
-
+    }
     function readNullableEnums(callback) {
         readByteArray(true, callback);
-    };
-
-
-
+    }
     function readInts(callback){
 		readArrayOfElements(readInt, callback);
-	};
-
-
+    }
     function readNulableEnums2D(callback) {
         readArrayOfElements(readNullableEnums, callback);
-    };
-
+    }
     function readString(callback) {
         readInt( function readStringf1(len) {
             if (len < 0) {
@@ -325,19 +309,17 @@ module.exports.connect = function connect(host, port, onConnect) {
                 });
             }
         });
-    };
-
+    }
     function writeString (s) {
         var b = Buffer.from(s,'utf-8');
         writeInt(b.length);
         client.write(b);
-    };
+    }
     function writeInt (val) {
         tmpBuf.writeInt32LE(val,0);
         var b = tmpBuf.slice(0,4);
         client.write(b);
-    };
-
+    }
     function writeDouble (val) {
         tmpBuf.writeDoubleLE(val,0);
         var b = tmpBuf.slice(0,8);
@@ -358,8 +340,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         tmpBuf.writeInt8(val,0);
         var b = tmpBuf.slice(0,1);
         client.write(b);
-    };
-
+    }
     function writeMessages (messages) {
         if (!messages) {
             writeInt(-1);
@@ -462,8 +443,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 			
 			
 		})
-	};
-
+    }
     this.readPlayerContextMessage = function readPlayerContextMessage(callback) {
 
 
@@ -493,23 +473,20 @@ module.exports.connect = function connect(host, port, onConnect) {
                 })
             }
         })
-    };
-
-
-
+    }
     function readArrayOfElements(reader, callback){
 
         var arrayTargetLen;
         var arrayBuilder;
 
-        var __ArrayReaderHendler = function __ArrayReaderHendler(data) {
+        var __ArrayReaderHandler = function __ArrayReaderHandler(data) {
             arrayBuilder.push(data);
             arrayTargetLen--;
 
             if (arrayTargetLen === 0) {
                 callback(arrayBuilder);
             } else {
-                reader(__ArrayReaderHendler);
+                reader(__ArrayReaderHandler);
             }
         };
 
@@ -524,15 +501,13 @@ module.exports.connect = function connect(host, port, onConnect) {
                 callback(arrayBuilder);
             } else {
                 arrayTargetLen = len;
-                reader(__ArrayReaderHendler);
+                reader(__ArrayReaderHandler);
             }
         });
-    };
-
+    }
     function readWizards (callback) {
         readArrayOfElements(readWizard, callback);
-    };
-
+    }
     function readMessage (callback) {
         readBool(function readMessagef1(val) {
             if (!val) {
@@ -548,12 +523,10 @@ module.exports.connect = function connect(host, port, onConnect) {
                 })
             }
         });
-    };
-
+    }
     function readMessages (callback) {
         readArrayOfElements(readMessage, callback);
-    };
-
+    }
     function readWizard (callback) {
         readBool(function readWizardf1(val) {
             if (!val) {
@@ -595,8 +568,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 })
             }
         })
-    };
-
+    }
     function readStatus(callback){
         readBool(function readStatusf1(val) {
             if (!val) {
@@ -608,12 +580,10 @@ module.exports.connect = function connect(host, port, onConnect) {
                 })
             }
         });
-    };
-
+    }
     function readStatuses(callback) {
         readArrayOfElements(readStatus, callback);
-    };
-
+    }
     function readWorld (callback) {
         readBool(function readWorldf1(val) {
             if (!val) {
@@ -658,8 +628,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 })
             }
         })
-    };
-
+    }
     function readPlayer (callback) {
         readBool(function readPlayerf1(val) {
             if (!val) {
