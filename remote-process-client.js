@@ -38,7 +38,7 @@ module.exports.connect = function connect(host, port, onConnect) {
     client.setNoDelay();
 
 
-    function dataHandler (data) {
+    function dataHandler(data) {
 
         if (data) {
             if (remainder) {
@@ -59,30 +59,30 @@ module.exports.connect = function connect(host, port, onConnect) {
         var tooSmall = false;
         var v;
 
-        while (!tooSmall && (request.length>0)) {
+        while (!tooSmall && (request.length > 0)) {
 
             //network problems imitation
             /*
-            if (len>0 && Math.random()>0.995) {
+             if (len>0 && Math.random()>0.995) {
 
-                setTimeout(dataHandler, 100);
-                break;
-            }//*/
+             setTimeout(dataHandler, 100);
+             break;
+             }//*/
 
-            if(typeof (pos) === 'undefined') throw 'error';
+            if (typeof (pos) === 'undefined') throw 'error';
 
             var need = request[0];
 
-            if (typeof (need)==='function') {
+            if (typeof (need) === 'function') {
                 //end of request;
 
                 need(answer);
                 answer = [];
 
-            } else if(typeof (need)==='number') {
+            } else if (typeof (need) === 'number') {
                 //read buffer with certain length
                 if (len >= need) {
-                    answer.push(data.slice(pos, pos+need));
+                    answer.push(data.slice(pos, pos + need));
                     pos += need;
                     len -= need;
                 }
@@ -90,9 +90,9 @@ module.exports.connect = function connect(host, port, onConnect) {
                 case 'enum':
                     if (len > 1) {
                         v = data.readInt8(pos);
-                        answer.push((v<0)?null:v);
-                        pos+=1;
-                        len-=1;
+                        answer.push((v < 0) ? null : v);
+                        pos += 1;
+                        len -= 1;
                     } else {
                         tooSmall = true;
                     }
@@ -101,10 +101,10 @@ module.exports.connect = function connect(host, port, onConnect) {
                     if (len > 1) {
 
                         var bl = data.readInt8(pos);
-                        if(bl !== 0 && bl !== 1) throw 'wrong bool value reade';
-                        answer.push(bl!==0);
-                        pos+=1;
-                        len-=1;
+                        if (bl !== 0 && bl !== 1) throw 'wrong bool value reade';
+                        answer.push(bl !== 0);
+                        pos += 1;
+                        len -= 1;
                     } else {
                         tooSmall = true;
                     }
@@ -113,8 +113,8 @@ module.exports.connect = function connect(host, port, onConnect) {
                     if (len >= 8) {
 
                         answer.push(data.readUInt32LE(pos));
-                        pos+=8;
-                        len -=8;
+                        pos += 8;
+                        len -= 8;
                     } else {
                         tooSmall = true;
                     }
@@ -122,8 +122,8 @@ module.exports.connect = function connect(host, port, onConnect) {
                 case 'int':
                     if (len >= 4) {
                         answer.push(data.readInt32LE(pos));
-                        pos+=4;
-                        len -=4;
+                        pos += 4;
+                        len -= 4;
                     } else {
                         tooSmall = true;
                     }
@@ -131,8 +131,8 @@ module.exports.connect = function connect(host, port, onConnect) {
                 case 'double':
                     if (len >= 8) {
                         answer.push(data.readDoubleLE(pos));
-                        pos+=8;
-                        len -=8;
+                        pos += 8;
+                        len -= 8;
                     } else {
                         tooSmall = true;
                     }
@@ -150,7 +150,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         }
 
         if (len > 0) {
-            if (pos> 0) {
+            if (pos > 0) {
                 remainder = data.slice(pos);
             } else {
                 remainder = data;
@@ -162,10 +162,11 @@ module.exports.connect = function connect(host, port, onConnect) {
         busy = false;
 
     }
+
     client.on('data', dataHandler);
     client.on('error', function onError(e) {
 
-        console.log("SOCKET ERROR: "+e.message);
+        console.log("SOCKET ERROR: " + e.message);
         process.exit(1);
     });
 
@@ -181,12 +182,12 @@ module.exports.connect = function connect(host, port, onConnect) {
         process.exit();
     });
 
-    var readSequence = function readSequence(a,callback) {
+    var readSequence = function readSequence(a, callback) {
         if (!callback) {
             throw 'Callback expected';
         }
         if (Array.isArray(a)) {
-            if(a.length < 1){
+            if (a.length < 1) {
                 throw 'empty sequence to read';
             }
             request = request.concat(a);
@@ -200,66 +201,70 @@ module.exports.connect = function connect(host, port, onConnect) {
             dataHandler();
         }
         /* //callers tracing. Weapon against callbacks-hell
-        var a = [];
-        var c = arguments.callee;
-        while(c){
-            if(!c.name) throw 'unknown function';
-            a.push(c);
-            c = c.caller;
-        }
-        callback.callStackDebug = a;*/
+         var a = [];
+         var c = arguments.callee;
+         while(c){
+         if(!c.name) throw 'unknown function';
+         a.push(c);
+         c = c.caller;
+         }
+         callback.callStackDebug = a;*/
 
     };
 
 
-
-    
     function readEnum(callback) {
         readSequence('enum', function onEnumReaded(a) {
             callback(a[0]);
         });
     }
+
     function readBool(callback) {
-        readSequence('bool',  function onBoolReaded(a) {
+        readSequence('bool', function onBoolReaded(a) {
 
             callback(a[0]);
         });
     }
-    function  readInt(callback) {
-        readSequence('int',  function onIntReaded(a) {
+
+    function readInt(callback) {
+        readSequence('int', function onIntReaded(a) {
             callback(a[0]);
         });
     }
-    function  readLong(callback) {
-        readSequence('long',  function onLongReaded(a) {
+
+    function readLong(callback) {
+        readSequence('long', function onLongReaded(a) {
             callback(a[0]);
         });
     }
+
     function readDouble(callback) {
-        readSequence('double',  function omDoubleReaded(a) {
+        readSequence('double', function omDoubleReaded(a) {
             callback(a[0]);
         });
     }
+
     function readFixedByteArray(len, callback) {
 
-        if(len > 100) {
+        if (len > 100) {
             throw( 'too big len');
         }
 
-        readSequence(len,  function onFixedByteArrayReaded(a) {
+        readSequence(len, function onFixedByteArrayReaded(a) {
             callback(a[0]);
         });
     }
-    function readByteArray(nullable, callback) {
-        console.log('readByteArray: '+arguments.callee.name);
 
-        readInt( function readByteArrayf1(len) {
-            console.log (len);
+    function readByteArray(nullable, callback) {
+        console.log('readByteArray: ' + arguments.callee.name);
+
+        readInt(function readByteArrayf1(len) {
+            console.log(len);
 
             if (len > 100) {
                 throw( 'too big len');
             }
-            if(len < 0){
+            if (len < 0) {
                 callback(null);
             } else if (len === 0) {
                 if (nullable) {
@@ -281,23 +286,28 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         });
     }
+
     function readEnums(enumType, callback) {
         readArrayOfElements(readEnum, function onEnumsReaded(a) {
             a.some(enumType.validate);
             callback(a);
         });
     }
+
     function readNullableEnums(callback) {
         readByteArray(true, callback);
     }
-    function readInts(callback){
-		readArrayOfElements(readInt, callback);
+
+    function readInts(callback) {
+        readArrayOfElements(readInt, callback);
     }
+
     function readNulableEnums2D(callback) {
         readArrayOfElements(readNullableEnums, callback);
     }
+
     function readString(callback) {
-        readInt( function readStringf1(len) {
+        readInt(function readStringf1(len) {
             if (len < 0) {
                 callback(null);
             } else if (len === 0) {
@@ -310,55 +320,60 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         });
     }
-    function writeString (s) {
-        var b = Buffer.from(s,'utf-8');
+
+    function writeString(s) {
+        var b = Buffer.from(s, 'utf-8');
         writeInt(b.length);
         client.write(b);
     }
-    function writeInt (val) {
-        tmpBuf.writeInt32LE(val,0);
-        var b = tmpBuf.slice(0,4);
-        client.write(b);
-    }
-    function writeDouble (val) {
-        tmpBuf.writeDoubleLE(val,0);
-        var b = tmpBuf.slice(0,8);
+
+    function writeInt(val) {
+        tmpBuf.writeInt32LE(val, 0);
+        var b = tmpBuf.slice(0, 4);
         client.write(b);
     }
 
-    function writeLong(val){
-        tmpBuf.writeInt32LE(val,0);
-        tmpBuf.writeInt32LE((val===-1)?-1:0,4);
-        var b = tmpBuf.slice(0,8);
+    function writeDouble(val) {
+        tmpBuf.writeDoubleLE(val, 0);
+        var b = tmpBuf.slice(0, 8);
         client.write(b);
     }
 
-    var tmpBuf=Buffer.alloc(1000);
+    function writeLong(val) {
+        tmpBuf.writeInt32LE(val, 0);
+        tmpBuf.writeInt32LE((val === -1) ? -1 : 0, 4);
+        var b = tmpBuf.slice(0, 8);
+        client.write(b);
+    }
 
-    function writeEnum (val) {
+    var tmpBuf = Buffer.alloc(1000);
+
+    function writeEnum(val) {
         if (!val) val = 0;
-        tmpBuf.writeInt8(val,0);
-        var b = tmpBuf.slice(0,1);
+        tmpBuf.writeInt8(val, 0);
+        var b = tmpBuf.slice(0, 1);
         client.write(b);
     }
-    function writeMessages (messages) {
+
+    function writeMessages(messages) {
         if (!messages) {
             writeInt(-1);
             return;
         }
-        
+
         writeInt(messages.length);
 
         messages.some(writeMessage);
     }
-    function writeMessage (message) {
+
+    function writeMessage(message) {
         writeBoolean(message);
         writeEnum(message.lane);
         writeEnum(message.skillToLearn);
         writeByteArray(message.rawMessage);
     }
 
-    function writeByteArray (array) {
+    function writeByteArray(array) {
         if (!array) {
             writeInt(-1);
         } else {
@@ -368,8 +383,8 @@ module.exports.connect = function connect(host, port, onConnect) {
         }
     }
 
-    function writeBoolean (v) {
-        writeEnum(v?1:0);
+    function writeBoolean(v) {
+        writeEnum(v ? 1 : 0);
     }
 
     this.writeTokenMessage = function writeTokenMessage(token) {
@@ -390,62 +405,55 @@ module.exports.connect = function connect(host, port, onConnect) {
     };
 
     this.readGameContextMessage = function readGameContextMessage(callback) {
-		readEnum(function readGameContextMessagef1(val) {
+        readEnum(function readGameContextMessagef1(val) {
             ensureMessageType(val, MessageType.GameContext);
-			readGame(callback);
-		});
+            readGame(callback);
+        });
     };
 
     function readGame(callback) {
-		readBool(function readGamef1(val) {
-			if (!val) {
-				callback(null);
-			} else {
-				readSequence([
-					'long', 'int', 'double', 'bool', 'bool', 'double', 'double',
+        readBool(function readGamef1(val) {
+            if (!val) {
+                callback(null);
+            } else {
+                readSequence([
+                    'long', 'int', 'double', 'bool', 'bool', 'double', 'double',
                     'double', 'double', 'double', 'double', 'double', 'double', 'int',
                     'double', 'int', 'double', 'double', 'double', 'double', 'double',
                     'double', 'double', 'int', 'int', 'int', 'int', 'double', 'double',
                     'double', 'double', 'double', 'int', 'int', 'int', 'int', 'int',
                     'int', 'int', 'int', 'int', 'int', 'int', 'int', 'int', 'int',
                     'int', 'double', 'double'], function readGamef2(firstPart) {
-						
-						readInts(function readGamef3(ints){
-							readSequence([
-								'double', 'double', 'double',
-								'double', 'int', 'int', 'int', 'int', 'double', 'double', 'int',
-								'double', 'double', 'double', 'int', 'int', 'double', 'double',
-								'int', 'double', 'double', 'int', 'double', 'double', 'int',
-								'double', 'double', 'double', 'double', 'int', 'int', 'double',
-								'double', 'double', 'double', 'int', 'int', 'double', 'double',
-								'double', 'double', 'int', 'int', 'int', 'int', 'int', 'double',
-								'int', 'int', 'double', 'double', 'double', 'int', 'double',
-								'double', 'double', 'double', 'int', 'int', 'double', 'int'
-							], function readGamef4(secondPart) {
-								firstPart.push(ints);
-								var data = firstPart.concat(secondPart);
-								var game = Game.getInstance.apply(undefined, data);
-								callback(game);
-							})
 
-						})
-						
+                    readInts(function readGamef3(ints) {
+                        readSequence([
+                            'double', 'double', 'double',
+                            'double', 'int', 'int', 'int', 'int', 'double', 'double', 'int',
+                            'double', 'double', 'double', 'int', 'int', 'double', 'double',
+                            'int', 'double', 'double', 'int', 'double', 'double', 'int',
+                            'double', 'double', 'double', 'double', 'int', 'int', 'double',
+                            'double', 'double', 'double', 'int', 'int', 'double', 'double',
+                            'double', 'double', 'int', 'int', 'int', 'int', 'int', 'double',
+                            'int', 'int', 'double', 'double', 'double', 'int', 'double',
+                            'double', 'double', 'double', 'int', 'int', 'double', 'int'
+                        ], function readGamef4(secondPart) {
+                            firstPart.push(ints);
+                            var data = firstPart.concat(secondPart);
+                            var game = Game.getInstance.apply(undefined, data);
+                            callback(game);
+                        })
 
-							
-							
-						
-				
-					})
-			}
-			
-			
-			
-			
-			
-		})
+                    })
+
+
+                })
+            }
+
+
+        })
     }
-    this.readPlayerContextMessage = function readPlayerContextMessage(callback) {
 
+    this.readPlayerContextMessage = function readPlayerContextMessage(callback) {
 
 
         readEnum(function readPlayerContextMessagef1(messageType) {
@@ -460,12 +468,12 @@ module.exports.connect = function connect(host, port, onConnect) {
 
     };
 
-    function readPlayerContext (callback) {
+    function readPlayerContext(callback) {
         readBool(function readPlayerContextf1(val) {
             if (!val) {
                 callback(null);
             } else {
-                readWizards(function readPlayerContextf2(wizards){
+                readWizards(function readPlayerContextf2(wizards) {
                     readWorld(function readPlayerContextf3(world) {
                         var playerContext = PlayerContext.getInstance(wizards, world);
                         callback(playerContext);
@@ -474,7 +482,8 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         })
     }
-    function readArrayOfElements(reader, callback){
+
+    function readArrayOfElements(reader, callback) {
 
         var arrayTargetLen;
         var arrayBuilder;
@@ -505,10 +514,12 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         });
     }
-    function readWizards (callback) {
+
+    function readWizards(callback) {
         readArrayOfElements(readWizard, callback);
     }
-    function readMessage (callback) {
+
+    function readMessage(callback) {
         readBool(function readMessagef1(val) {
             if (!val) {
                 callback(null);
@@ -516,7 +527,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 readEnum(function readMessagef2(v1) {
                     readEnum(function readMessagef3(v2) {
                         readByteArray(false, function f4(bytes) {
-                            var message = Message.getInstance.apply(undefined, v1,v2,bytes);
+                            var message = Message.getInstance.apply(undefined, v1, v2, bytes);
                             callback(message);
                         })
                     })
@@ -524,10 +535,12 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         });
     }
-    function readMessages (callback) {
+
+    function readMessages(callback) {
         readArrayOfElements(readMessage, callback);
     }
-    function readWizard (callback) {
+
+    function readWizard(callback) {
         readBool(function readWizardf1(val) {
             if (!val) {
                 callback(null);
@@ -552,7 +565,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                                         part2.push(ints1);
                                         readBool(function readWizardf6(bool1) {
                                             part2.push(bool1);
-                                            readMessages(function readWizardf7(messages){
+                                            readMessages(function readWizardf7(messages) {
                                                 part2.push(messages);
                                                 var data = part1.concat(part2);
                                                 var wizard = Wizard.getInstance.apply(undefined, data);
@@ -569,7 +582,8 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         })
     }
-    function readStatus(callback){
+
+    function readStatus(callback) {
         readBool(function readStatusf1(val) {
             if (!val) {
                 callback(null);
@@ -581,19 +595,21 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         });
     }
+
     function readStatuses(callback) {
         readArrayOfElements(readStatus, callback);
     }
-    function readWorld (callback) {
+
+    function readWorld(callback) {
         readBool(function readWorldf1(val) {
             if (!val) {
                 callback(null);
             } else {
                 readSequence([
-                    'int','int','double','double'
+                    'int', 'int', 'double', 'double'
                 ], function readWorldf2(part1) {
                     readArrayOfElements(readPlayer, function readWorldonPlayerReaded(players) {
-                          readWizards(function readWorldonWizards(wizards) {
+                        readWizards(function readWorldonWizards(wizards) {
                             readArrayOfElements(readMinion, function readWorldOnMinions(minions) {
                                 readArrayOfElements(readProjectile, function readWorldonProjectiles(projectiles) {
                                     readArrayOfElements(readBonus, function readWorldonBonuses(bonuses) {
@@ -616,7 +632,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                                                     prevBuildings = buildings;
                                                 }
 
-                                                var world = World.getInstance(part1[0],part1[1],part1[2],part1[3],players,wizards,minions,projectiles,bonuses,buildings,trees);
+                                                var world = World.getInstance(part1[0], part1[1], part1[2], part1[3], players, wizards, minions, projectiles, bonuses, buildings, trees);
                                                 callback(world);
                                             })
                                         })
@@ -629,7 +645,8 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         })
     }
-    function readPlayer (callback) {
+
+    function readPlayer(callback) {
         readBool(function readPlayerf1(val) {
             if (!val) {
                 callback(null);
@@ -648,7 +665,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         })
     }
 
-    function readMinion (callback) {
+    function readMinion(callback) {
         readBool(function readMinionf1(val) {
             if (!val) {
                 callback(null);
@@ -659,7 +676,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 ], function readMinionf2(part1) {
                     readStatuses(function readMinionf3(statuses) {
                         part1.push(statuses);
-                        readSequence(['enum','double', 'int', 'int', 'int'], function f4(part2) {
+                        readSequence(['enum', 'double', 'int', 'int', 'int'], function f4(part2) {
                             var minion = Minion.getInstance.apply(undefined, part1.concat(part2));
                             callback(minion);
                         })
@@ -669,7 +686,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         })
     }
 
-    function readProjectile (callback) {
+    function readProjectile(callback) {
         readBool(function readProjectilef1(val) {
             if (!val) {
                 callback(null);
@@ -685,7 +702,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         })
     }
 
-    function readBonus (callback) {
+    function readBonus(callback) {
         readBool(function readBonusf1(val) {
             if (!val) {
                 callback(null);
@@ -701,7 +718,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         })
     }
 
-    function readBuilding (callback) {
+    function readBuilding(callback) {
         readBool(function readBuildingf1(val) {
             if (!val) {
                 callback(null);
@@ -712,7 +729,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 ], function readBuildingf2(part1) {
                     readStatuses(function readBuildingf3(statuses) {
                         part1.push(statuses);
-                        readSequence([ 'enum',
+                        readSequence(['enum',
                             'double', 'double', 'int', 'int', 'int'
 
                         ], function readBuildingf4(part2) {
@@ -730,7 +747,7 @@ module.exports.connect = function connect(host, port, onConnect) {
     var prevBuildings;
 
 
-    function readTree (callback) {
+    function readTree(callback) {
         readBool(function readTreef1(val) {
             if (!val) {
                 callback(null);
@@ -749,7 +766,8 @@ module.exports.connect = function connect(host, port, onConnect) {
             }
         })
     }
-    function writeMove (move) {
+
+    function writeMove(move) {
         if (!move) {
             writeBoolean(false);
             return;
@@ -759,7 +777,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         writeDouble(move.getSpeed());
         writeDouble(move.getStrafeSpeed());
         writeDouble(move.getTurn());
-        writeEnum( move.getAction());
+        writeEnum(move.getAction());
         writeDouble(move.getCastAngle());
         writeDouble(move.getMinCastDistance());
         writeDouble(move.getMaxCastDistance());
@@ -775,24 +793,22 @@ module.exports.connect = function connect(host, port, onConnect) {
     }
 
 
-
-
 };
 
 
 function ensureMessageType(actualType, expectedType) {
     if (actualType != expectedType) {
-        throw "Received wrong message [actual="+actualType+", expected="+expectedType+"].";
+        throw "Received wrong message [actual=" + actualType + ", expected=" + expectedType + "].";
     }
 }
 
 var MessageType = {
-    Unknown:0,
-    GameOver:1,
-    AuthenticationToken:2,
-    TeamSize:3,
-    ProtocolVersion:4,
-    GameContext:5,
-    PlayerContext:6,
-    Moves:7
+    Unknown: 0,
+    GameOver: 1,
+    AuthenticationToken: 2,
+    TeamSize: 3,
+    ProtocolVersion: 4,
+    GameContext: 5,
+    PlayerContext: 6,
+    Moves: 7
 };

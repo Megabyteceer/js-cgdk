@@ -15,14 +15,12 @@ var Faction = require('./model/faction.js');
 //static (available between strategies) variables here
 
 
-module.exports.getInstance =function () {
+module.exports.getInstance = function () {
 
     //private strategy variables here;
 
 
-
     return function move(self, world, game, move) {
-
 
 
         move.setSpeed(game.wizardForwardSpeed);

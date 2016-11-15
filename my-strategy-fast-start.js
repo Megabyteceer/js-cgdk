@@ -17,10 +17,9 @@ var WAYPOINT_RADIUS = 100.0;
 
 var LOW_HP_FACTOR = 0.25;
 
-module.exports.getInstance =function () {
+module.exports.getInstance = function () {
 
     //private strategy variables here;
-
 
 
     /**
@@ -31,20 +30,17 @@ module.exports.getInstance =function () {
      */
     var waypointsByLane = [];
     var __r;
-	var rand = function (max) {
-		__r = ((__r * (33)) + 831);
-		__r%=12147483647;
-		if(max !== undefined){
-			return Math.ceil(__r/491) % max;
-		}
-		return Math.ceil(__r/493);
-	};
-    var nextBoolean = function () {
-        return (rand()&1) === 0;
+    var rand = function (max) {
+        __r = ((__r * (33)) + 831);
+        __r %= 12147483647;
+        if (max !== undefined) {
+            return Math.ceil(__r / 491) % max;
+        }
+        return Math.ceil(__r / 493);
     };
-
-
-
+    var nextBoolean = function () {
+        return (rand() & 1) === 0;
+    };
 
 
     var lane;
@@ -64,7 +60,7 @@ module.exports.getInstance =function () {
 
     var self, world, game, move;
 
-    var moveFunction = function(self, world, game, move) {
+    var moveFunction = function (self, world, game, move) {
 
 
         if (!initialized) {
@@ -102,7 +98,7 @@ module.exports.getInstance =function () {
                     // ... то атакуем.
                     move.setAction(ActionType.MagicMissile);
                     move.setCastAngle(angle);
-                    move.setMinCastDistance (distance - nearestTarget.radius + game.magicMissileRadius);
+                    move.setMinCastDistance(distance - nearestTarget.radius + game.magicMissileRadius);
                 }
 
                 return;
@@ -111,7 +107,6 @@ module.exports.getInstance =function () {
 
         // Если нет других действий, просто продвигаемся вперёд.
         goTo(getNextWaypoint());
-
 
 
     };
@@ -124,45 +119,45 @@ module.exports.getInstance =function () {
      * случайных чисел значением, полученным от симулятора игры.
      */
 
-    var initializeStrategy = function(self, game) {
+    var initializeStrategy = function (self, game) {
         __r = game.randomSeed;
         var mapSize = game.mapSize;
 
         waypointsByLane[LaneType.Middle] = [
-                {x:100.0, y:mapSize - 100.0},
-                nextBoolean()
-                        ? {x:600.0, y:mapSize - 200.0}
-                        : {x:200.0, y:mapSize - 600.0},
-                {x:800.0, y:mapSize - 800.0},
-                {x:mapSize - 600.0, y:600.0}
+            {x: 100.0, y: mapSize - 100.0},
+            nextBoolean()
+                ? {x: 600.0, y: mapSize - 200.0}
+                : {x: 200.0, y: mapSize - 600.0},
+            {x: 800.0, y: mapSize - 800.0},
+            {x: mapSize - 600.0, y: 600.0}
         ];
 
         waypointsByLane[LaneType.Top] = [
-                    {x:100.0, y:mapSize - 100.0},
-                    {x:100.0, y:mapSize - 400.0},
-                    {x:200.0, y:mapSize - 800.0},
-                    {x:200.0, y:mapSize * 0.75},
-                    {x:200.0, y:mapSize * 0.5},
-                    {x:200.0, y:mapSize * 0.25},
-                    {x:200.0, y:200.0},
-                    {x:mapSize * 0.25, y:200.0},
-                    {x:mapSize * 0.5, y:200.0},
-                    {x:mapSize * 0.75, y:200.0},
-                    {x:mapSize - 200.0, y:200.0}
-            ];
+            {x: 100.0, y: mapSize - 100.0},
+            {x: 100.0, y: mapSize - 400.0},
+            {x: 200.0, y: mapSize - 800.0},
+            {x: 200.0, y: mapSize * 0.75},
+            {x: 200.0, y: mapSize * 0.5},
+            {x: 200.0, y: mapSize * 0.25},
+            {x: 200.0, y: 200.0},
+            {x: mapSize * 0.25, y: 200.0},
+            {x: mapSize * 0.5, y: 200.0},
+            {x: mapSize * 0.75, y: 200.0},
+            {x: mapSize - 200.0, y: 200.0}
+        ];
 
         waypointsByLane[LaneType.Bottom] = [
-                {x:100.0, y:mapSize - 100.0},
-                {x:400.0, y:mapSize - 100.0},
-                {x:800.0, y:mapSize - 200.0},
-                {x:mapSize * 0.25, y:mapSize - 200.0},
-                {x:mapSize * 0.5, y:mapSize - 200.0},
-                {x:mapSize * 0.75, y:mapSize - 200.0},
-                {x:mapSize - 200.0, y:mapSize - 200.0},
-                {x:mapSize - 200.0, y:mapSize * 0.75},
-                {x:mapSize - 200.0, y:mapSize * 0.5},
-                {x:mapSize - 200.0, y:mapSize * 0.25},
-                {x:mapSize - 200.0, y:200.0}
+            {x: 100.0, y: mapSize - 100.0},
+            {x: 400.0, y: mapSize - 100.0},
+            {x: 800.0, y: mapSize - 200.0},
+            {x: mapSize * 0.25, y: mapSize - 200.0},
+            {x: mapSize * 0.5, y: mapSize - 200.0},
+            {x: mapSize * 0.75, y: mapSize - 200.0},
+            {x: mapSize - 200.0, y: mapSize - 200.0},
+            {x: mapSize - 200.0, y: mapSize * 0.75},
+            {x: mapSize - 200.0, y: mapSize * 0.5},
+            {x: mapSize - 200.0, y: mapSize * 0.25},
+            {x: mapSize - 200.0, y: 200.0}
         ];
 
         switch (self.id) {
@@ -191,20 +186,18 @@ module.exports.getInstance =function () {
     /**
      * Сохраняем все входные данные в полях замыкания упрощения доступа к ним.
      */
-    var initializeTick = function(self_, world_, game_, move_) {
+    var initializeTick = function (self_, world_, game_, move_) {
         self = self_;
         world = world_;
         game = game_;
         move = move_;
     };
 
-    var getDistanceBetween = function(from, to){
+    var getDistanceBetween = function (from, to) {
         var dx = from.x - to.x;
         var dy = from.y - to.y;
-        return Math.sqrt(dx*dx+dy*dy);
+        return Math.sqrt(dx * dx + dy * dy);
     };
-
-
 
 
     /**
@@ -215,18 +208,18 @@ module.exports.getInstance =function () {
      * Дополнительно проверяем, не находится ли волшебник достаточно близко к какой-либо из ключевых точек. Если это
      * так, то мы сразу возвращаем следующую ключевую точку.
      */
-    var getNextWaypoint = function() {
+    var getNextWaypoint = function () {
         var lastWaypointIndex = waypoints.length - 1;
         var lastWaypoint = waypoints[lastWaypointIndex];
 
         for (var waypointIndex = 0; waypointIndex < lastWaypointIndex; ++waypointIndex) {
             var waypoint = waypoints[waypointIndex];
 
-            if (getDistanceBetween(waypoint,self) <= WAYPOINT_RADIUS) {
+            if (getDistanceBetween(waypoint, self) <= WAYPOINT_RADIUS) {
                 return waypoints[waypointIndex + 1];
             }
 
-            if (getDistanceBetween(lastWaypoint,waypoint) < getDistanceBetween(lastWaypoint, self)) {
+            if (getDistanceBetween(lastWaypoint, waypoint) < getDistanceBetween(lastWaypoint, self)) {
                 return waypoint;
             }
         }
@@ -238,7 +231,7 @@ module.exports.getInstance =function () {
      * Действие данного метода абсолютно идентично действию метода {@code getNextWaypoint}, если перевернуть массив
      * {@code waypoints}.
      */
-    var getPreviousWaypoint = function() {
+    var getPreviousWaypoint = function () {
         var firstWaypoint = waypoints[0];
 
         for (var waypointIndex = waypoints.length - 1; waypointIndex > 0; --waypointIndex) {
@@ -248,7 +241,7 @@ module.exports.getInstance =function () {
                 return waypoints[waypointIndex - 1];
             }
 
-            if (getDistanceBetween(firstWaypoint, waypoint) < getDistanceBetween(firstWaypoint,self)) {
+            if (getDistanceBetween(firstWaypoint, waypoint) < getDistanceBetween(firstWaypoint, self)) {
                 return waypoint;
             }
         }
@@ -272,13 +265,13 @@ module.exports.getInstance =function () {
     /**
      * Находим ближайшую цель для атаки, независимо от её типа и других характеристик.
      */
-    var getNearestTarget = function() {
-        var targets = world.buildings.concat(world.wizards,world.minions);
+    var getNearestTarget = function () {
+        var targets = world.buildings.concat(world.wizards, world.minions);
 
-        var nearestTarget=null;
+        var nearestTarget = null;
         var nearestTargetDistance = Number.MAX_VALUE;
 
-        targets.some(function(target){
+        targets.some(function (target) {
 
             if (target.faction === Faction.Neutral || target.faction === self.faction) {
                 return;

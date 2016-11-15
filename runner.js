@@ -2,23 +2,23 @@
  * Created by Megabyte on 09.11.2016.
  */
 
-var token = process.argv[4]||"0000000000000000";
+var token = process.argv[4] || "0000000000000000";
 
 var RemoteProcessClient = require('./remote-process-client.js');
 
-var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2]||'127.0.0.1', process.argv[3]||31001, function onServerConnect() {
+var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2] || '127.0.0.1', process.argv[3] || 31001, function onServerConnect() {
 
     if (MyStrategy.onLocalRunnerConnected) {
         MyStrategy.onLocalRunnerConnected();
     }
 
-    if(process.env.DEBUG){
+    if (process.env.DEBUG) {
         run();
     } else {
         try {
             run();
         } catch (e) {
-            console.log('INITIALIZATION ERROR: '+e.message);
+            console.log('INITIALIZATION ERROR: ' + e.message);
             process.exit(1);
         }
     }
@@ -75,7 +75,7 @@ function handleGameFrame(playerContext) {
 
             var move = Move.getInstance();
 
-            if(!isCallbackedStrategy){
+            if (!isCallbackedStrategy) {
                 moves[wizardIndex] = move;
             }
 
@@ -85,14 +85,14 @@ function handleGameFrame(playerContext) {
                 try {
                     callStrategy(wizardIndex, playerWizard, playerContext.world, game, move);
                 } catch (e) {
-                    console.log('ERROR: '+e.message);
+                    console.log('ERROR: ' + e.message);
                     process.exit(1);
                 }
             }
 
         }
     }
-    if(!isCallbackedStrategy) {
+    if (!isCallbackedStrategy) {
         afterAllStrategyProcessed();
     }
 }
@@ -103,7 +103,7 @@ function afterAllStrategyProcessed() {
 }
 
 var callBackCount;
-function callStrategy(wizardIndex,playerWizard, world, game, move) {
+function callStrategy(wizardIndex, playerWizard, world, game, move) {
 
     if (isCallbackedStrategy) {
         callBackCount++;
@@ -112,7 +112,7 @@ function callStrategy(wizardIndex,playerWizard, world, game, move) {
             moves[wizardIndex] = returnedMove;
 
             callBackCount--;
-            if(callBackCount===0){
+            if (callBackCount === 0) {
                 afterAllStrategyProcessed();
             }
 
