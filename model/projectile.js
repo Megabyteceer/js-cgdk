@@ -1,9 +1,7 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-
 var CircularUnit = require('./circular-unit.js');
-
 module.exports.getInstance = function (
     id,
     x,
@@ -18,7 +16,6 @@ module.exports.getInstance = function (
     ownerUnitId,
     ownerPlayerId
 ) {
-
     var ret = CircularUnit.getInstance(
         id,
         x,

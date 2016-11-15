@@ -1,7 +1,6 @@
 /**
  * Created by Megabyte on 11.11.2016.
  */
-
 module.exports = {
     Burning   : 0,
     Empowered : 1,

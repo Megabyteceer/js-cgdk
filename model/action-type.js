@@ -1,7 +1,6 @@
 /**
  * Created by Megabyte on 09.11.2016.
  */
-
 module.exports = {
     None         : 0,
     Staff        : 1,

@@ -2,21 +2,16 @@
  * Created by Megabyte on 12.11.2016.
  */
 "use strict";
-
 var module = {exports: {}};
 function require(name) {
     /*mocked*/
 }
-
 var captureModuleExports;
-
 var paused;
 var lastPackedProcessed;
 var maxPackedProcessed = 0;
-
 (function () {
     var game;
-
     var status = $('#status');
     status.on("click", function () {
         var f = prompt('Enter frame to go [0-' + maxPackedProcessed + ']:');
@@ -25,30 +20,25 @@ var maxPackedProcessed = 0;
             processFrame(lastPackedProcessed);
         }
     });
-
     function doPause() {
         if (!paused) {
             playPause();
         }
     }
-
     function playPause() {
         paused = !paused;
         $("#play-stop").text(paused ? '▶' : '❚❚');
     }
-
     function prevStep() {
         doPause();
         lastPackedProcessed--;
         processFrame(lastPackedProcessed);
     }
-
     function nextStep() {
         doPause();
         lastPackedProcessed++;
         processFrame(lastPackedProcessed);
     }
-
     function zoomIn() {
         zoom *= 1.3333333;
         localStorage.setItem('zoom', zoom);
@@ -56,7 +46,6 @@ var maxPackedProcessed = 0;
             processFrame(lastPackedProcessed);
         }
     }
-
     function zoomOut() {
         zoom /= 1.3333333;
         localStorage.setItem('zoom', zoom);
@@ -64,7 +53,6 @@ var maxPackedProcessed = 0;
             processFrame(lastPackedProcessed);
         }
     }
-
     $(document).keypress(function (e) {
         switch (e.keyCode) {
             case 1073:
@@ -80,7 +68,6 @@ var maxPackedProcessed = 0;
                 break;
         }
     });
-
     var px, py;
     var pressed;
     var $canvas = $('#debug-canvas');
@@ -95,9 +82,7 @@ var maxPackedProcessed = 0;
             px = e.clientX;
             py = e.clientY;
         }
-
     });
-
     $canvas.mousedown(function (e) {
         pressed = true;
         px = e.clientX;
@@ -107,11 +92,9 @@ var maxPackedProcessed = 0;
         pressed = false;
     });
 
-
     $("#link-camera").on("click", function () {
         cameraLinked = true;
     });
-
     $("#zoom-in").on("click", zoomIn);
     $("#zoom-out").on("click", zoomOut);
     $("#play-stop").on("click", playPause);
@@ -121,7 +104,6 @@ var maxPackedProcessed = 0;
         doPause();
         processFrame(lastPackedProcessed);
     });
-
 
     function getParameterByName(name, url) {
         if (!url) {
@@ -134,7 +116,6 @@ var maxPackedProcessed = 0;
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
-
 
     captureModuleExports = function captureModuleExports_(destinationName) {
         if (!window[destinationName]) {
@@ -149,7 +130,6 @@ var maxPackedProcessed = 0;
         }
         module.exports = {};
     };
-
     var strategy;
     var initInterval = setInterval(function () {
         if (window.hasOwnProperty('Strategy')) {
@@ -162,32 +142,24 @@ var maxPackedProcessed = 0;
             }, 1);
         }
     }, 100);
-
     var busy;
-
     function processFrame(packetNum) {
-
         if (!packetNum) {
             packetNum = -1;
         }
         if (busy)return;
         busy = true;
         $.getJSON('packet.JSON/' + packetNum, function (data) {
-
             if (data === 'close-window') {
                 return;
                 window.close();
             }
-
             busy = false;
-
             var self = parseWizard(data.self);
             if (data.game) {
                 game = data.game;
             }
-
             var world = data.world;
-
             world.wizards = world.wizards.map(parseWizard);
             world.trees = world.trees.map(parseTree);
             world.projectiles = world.projectiles.map(parseProjectile);
@@ -197,13 +169,9 @@ var maxPackedProcessed = 0;
             world.bonuses = world.bonuses.map(parseBonus);
             world.myPlayer = parseWizard(world.myPlayer);
 
-
             var move = Move.getInstance();
-
             drawMap(self, world);
-
             strategy(self, world, game, move);
-
 
             var objectMoveToSend = {
                 speed: move.getSpeed(),
@@ -218,12 +186,10 @@ var maxPackedProcessed = 0;
                 messages: move.getMessages(),
                 packetNum: data.packetNum
             };
-
             if (objectMoveToSend.speed === null)throw 'wrong value';
             lastPackedProcessed = data.packetNum;
             maxPackedProcessed = Math.max(lastPackedProcessed, maxPackedProcessed);
             status.text('step: ' + lastPackedProcessed);
-
             $.ajax({
                 type: "POST",
                 url: '/move',
@@ -236,11 +202,8 @@ var maxPackedProcessed = 0;
                 },
                 contentType: "application/json; charset=utf-8"
             });
-
         });
-
     }
-
     function parseWizard(data) {
         if (!data) return null;
         return Wizard.getInstance(
@@ -255,7 +218,6 @@ var maxPackedProcessed = 0;
             data.life,
             data.maxLife,
             data.statuses,
-
             data.ownerPlayerId,
             data.isMe,
             data.mana,
@@ -271,7 +233,6 @@ var maxPackedProcessed = 0;
             data.messages
         );
     }
-
     function parseTree(data) {
         if (!data) return null;
         return Tree.getInstance(
@@ -288,7 +249,6 @@ var maxPackedProcessed = 0;
             data.statuses
         );
     }
-
     function parseProjectile(data) {
         if (!data) return null;
         return Projectile.getInstance(
@@ -300,13 +260,11 @@ var maxPackedProcessed = 0;
             data.angle,
             data.faction,
             data.radius,
-
             data.type,
             data.ownerUnitId,
             data.ownerPlayerId
         );
     }
-
     function parsePlayer(data) {
         if (!data) return null;
         return Player.getInstance(
@@ -318,7 +276,6 @@ var maxPackedProcessed = 0;
             data.faction
         );
     }
-
     function parseMinion(data) {
         if (!data) return null;
         return Minion.getInstance(
@@ -335,7 +292,6 @@ var maxPackedProcessed = 0;
             data.statuses
         );
     }
-
     function parseBuilding(data) {
         if (!data) return null;
         return Building.getInstance(
@@ -350,7 +306,6 @@ var maxPackedProcessed = 0;
             data.life,
             data.maxLife,
             data.statuses,
-
             data.type,
             data.visionRange,
             data.attackRange,
@@ -359,7 +314,6 @@ var maxPackedProcessed = 0;
             data.remainingActionCooldownTicks
         );
     }
-
     function parseBonus(data) {
         if (!data) return null;
         return Bonus.getInstance(
@@ -371,7 +325,6 @@ var maxPackedProcessed = 0;
             data.angle,
             data.faction,
             data.radius,
-
             data.type
         );
     }

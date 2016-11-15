@@ -11,16 +11,11 @@ var ProjectileType = require('./model/projectile-type.js');
 var SkillType = require('./model/skill-type.js');
 var StatusType = require('./model/status-type.js');
 var Faction = require('./model/faction.js');
-
 //static (available between strategies) variables here
 var WAYPOINT_RADIUS = 100.0;
-
 var LOW_HP_FACTOR = 0.25;
-
 module.exports.getInstance = function () {
-
     //private strategy variables here;
-
 
     /**
      * Ключевые точки для каждой линии, позволяющие упростить управление перемещением волшебника.
@@ -42,10 +37,8 @@ module.exports.getInstance = function () {
         return (rand() & 1) === 0;
     };
 
-
     var lane;
     var waypoints = [];
-
 
     /**
      * Основной метод стратегии, осуществляющий управление волшебником.
@@ -57,42 +50,31 @@ module.exports.getInstance = function () {
      * @param move  Результатом работы метода является изменение полей данного объекта.
      */
     var initialized;
-
     var self, world, game, move;
-
     var moveFunction = function (self, world, game, move) {
 
-
         if (!initialized) {
-
             initializeStrategy(self, game);
             initialized = true;
         }
         initializeTick(self, world, game, move);
-
         // Постоянно двигаемся из-стороны в сторону, чтобы по нам было сложнее попасть.
         // Считаете, что сможете придумать более эффективный алгоритм уклонения? Попробуйте! ;)
         move.setStrafeSpeed(nextBoolean() ? game.wizardStrafeSpeed : -game.wizardStrafeSpeed);
-
         // Если осталось мало жизненной энергии, отступаем к предыдущей ключевой точке на линии.
         if (self.life < self.maxLife * LOW_HP_FACTOR) {
             goTo(getPreviousWaypoint());
             return;
         }
-
         var nearestTarget = getNearestTarget();
-
         // Если видим противника ...
         if (nearestTarget) {
             var distance = self.getDistanceTo(nearestTarget);
-
             // ... и он в пределах досягаемости наших заклинаний, ...
             if (distance <= self.castRange) {
                 var angle = self.getAngleTo(nearestTarget);
-
                 // ... то поворачиваемся к цели.
                 move.setTurn(angle);
-
                 // Если цель перед нами, ...
                 if (Math.abs(angle) < game.staffSector / 2.0) {
                     // ... то атакуем.
@@ -100,17 +82,13 @@ module.exports.getInstance = function () {
                     move.setCastAngle(angle);
                     move.setMinCastDistance(distance - nearestTarget.radius + game.magicMissileRadius);
                 }
-
                 return;
             }
         }
-
         // Если нет других действий, просто продвигаемся вперёд.
         goTo(getNextWaypoint());
 
-
     };
-
 
     /**
      * Инциализируем стратегию.
@@ -118,11 +96,9 @@ module.exports.getInstance = function () {
      * Для этих целей обычно можно использовать конструктор, однако в данном случае мы хотим инициализировать генератор
      * случайных чисел значением, полученным от симулятора игры.
      */
-
     var initializeStrategy = function (self, game) {
         __r = game.randomSeed;
         var mapSize = game.mapSize;
-
         waypointsByLane[LaneType.Middle] = [
             {x: 100.0, y: mapSize - 100.0},
             nextBoolean()
@@ -131,7 +107,6 @@ module.exports.getInstance = function () {
             {x: 800.0, y: mapSize - 800.0},
             {x: mapSize - 600.0, y: 600.0}
         ];
-
         waypointsByLane[LaneType.Top] = [
             {x: 100.0, y: mapSize - 100.0},
             {x: 100.0, y: mapSize - 400.0},
@@ -145,7 +120,6 @@ module.exports.getInstance = function () {
             {x: mapSize * 0.75, y: 200.0},
             {x: mapSize - 200.0, y: 200.0}
         ];
-
         waypointsByLane[LaneType.Bottom] = [
             {x: 100.0, y: mapSize - 100.0},
             {x: 400.0, y: mapSize - 100.0},
@@ -159,7 +133,6 @@ module.exports.getInstance = function () {
             {x: mapSize - 200.0, y: mapSize * 0.25},
             {x: mapSize - 200.0, y: 200.0}
         ];
-
         switch (self.id) {
             case 1:
             case 2:
@@ -179,10 +152,8 @@ module.exports.getInstance = function () {
                 break;
             default:
         }
-
         waypoints = waypointsByLane[lane];
     };
-
     /**
      * Сохраняем все входные данные в полях замыкания упрощения доступа к ним.
      */
@@ -192,13 +163,11 @@ module.exports.getInstance = function () {
         game = game_;
         move = move_;
     };
-
     var getDistanceBetween = function (from, to) {
         var dx = from.x - to.x;
         var dy = from.y - to.y;
         return Math.sqrt(dx * dx + dy * dy);
     };
-
 
     /**
      * Данный метод предполагает, что все ключевые точки на линии упорядочены по уменьшению дистанции до последней
@@ -211,83 +180,63 @@ module.exports.getInstance = function () {
     var getNextWaypoint = function () {
         var lastWaypointIndex = waypoints.length - 1;
         var lastWaypoint = waypoints[lastWaypointIndex];
-
         for (var waypointIndex = 0; waypointIndex < lastWaypointIndex; ++waypointIndex) {
             var waypoint = waypoints[waypointIndex];
-
             if (getDistanceBetween(waypoint, self) <= WAYPOINT_RADIUS) {
                 return waypoints[waypointIndex + 1];
             }
-
             if (getDistanceBetween(lastWaypoint, waypoint) < getDistanceBetween(lastWaypoint, self)) {
                 return waypoint;
             }
         }
-
         return lastWaypoint;
     };
-
     /**
      * Действие данного метода абсолютно идентично действию метода {@code getNextWaypoint}, если перевернуть массив
      * {@code waypoints}.
      */
     var getPreviousWaypoint = function () {
         var firstWaypoint = waypoints[0];
-
         for (var waypointIndex = waypoints.length - 1; waypointIndex > 0; --waypointIndex) {
             var waypoint = waypoints[waypointIndex];
-
             if (getDistanceBetween(waypoint, self) <= WAYPOINT_RADIUS) {
                 return waypoints[waypointIndex - 1];
             }
-
             if (getDistanceBetween(firstWaypoint, waypoint) < getDistanceBetween(firstWaypoint, self)) {
                 return waypoint;
             }
         }
-
         return firstWaypoint;
     };
-
     /**
      * Простейший способ перемещения волшебника.
      */
     var goTo = function (point) {
         var angle = self.getAngleTo(point.x, point.y);
-
         move.setTurn(angle);
-
         if (Math.abs(angle) < (game.staffSector / 4.0)) {
             move.setSpeed(game.wizardForwardSpeed);
         }
     };
-
     /**
      * Находим ближайшую цель для атаки, независимо от её типа и других характеристик.
      */
     var getNearestTarget = function () {
         var targets = world.buildings.concat(world.wizards, world.minions);
-
         var nearestTarget = null;
         var nearestTargetDistance = Number.MAX_VALUE;
-
         targets.some(function (target) {
-
             if (target.faction === Faction.Neutral || target.faction === self.faction) {
                 return;
             }
-
             var distance = self.getDistanceTo(target);
-
             if (distance < nearestTargetDistance) {
                 nearestTarget = target;
                 nearestTargetDistance = distance;
             }
         });
-
         return nearestTarget;
     };
-
 
     return moveFunction; //возвращаем функцию move, чтобы runner мог ее вызывать
 };

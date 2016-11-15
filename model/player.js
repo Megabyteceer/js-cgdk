@@ -1,7 +1,6 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-
 module.exports.getInstance = function (
     id,
     isMe,
@@ -10,7 +9,6 @@ module.exports.getInstance = function (
     score,
     faction
 ) {
-
     return {
         id                : id,
         isMe              : isMe,
@@ -19,5 +17,4 @@ module.exports.getInstance = function (
         score             : score,
         faction           : faction
     };
-
 };

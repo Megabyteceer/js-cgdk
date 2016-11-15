@@ -2,18 +2,13 @@
  * Created by Megabyte on 10.11.2016.
  */
 
-
 var pool = {};
-
 var getAngleTo = function (x, y) {
     if(typeof x === 'number') return Math.atan2(y - this.y, x - this.x) - this.angle;
     else return Math.atan2(x.y - this.y, x.x - this.x) - this.angle;
 };
-
 var getDistanceTo = function (x, y) {
-
     var dx, dy;
-
     if(typeof x === 'number') {
         dx = x - this.x;
         dy = y - this.y;
@@ -23,9 +18,7 @@ var getDistanceTo = function (x, y) {
     }
     
     return Math.sqrt(dx * dx + dy * dy);
-
 };
-
 module.exports.getInstance = function (
     id,
     x,
@@ -54,7 +47,6 @@ module.exports.getInstance = function (
             angle: angle,
             faction: faction
         };
-
         ret.getAngleTo = getAngleTo.bind(ret);
         ret.getDistanceTo = getDistanceTo.bind(ret);
         pool[id] = ret;

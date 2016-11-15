@@ -1,15 +1,12 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-
 module.exports.getInstance = function (
     randomSeed,
     tickCount,
     mapSize,
-
     isSkillsEnabled,
     isRawMessagesEnabled,
-
     friendlyFireDamageFactor,
     buildingDamageScoreFactor,
     buildingEliminationScoreFactor,
@@ -20,7 +17,6 @@ module.exports.getInstance = function (
     teamWorkingScoreFactor,
     victoryScore,
     scoreGainRange,
-
     rawMessageMaxLength,
     rawMessageTransmissionSpeed,
     
@@ -140,7 +136,6 @@ module.exports.getInstance = function (
     movementBonusFactorPerSkillLevel,
     magicalDamageAbsorptionPerSkillLevel
 ) {
-
     return {
         randomSeed                           : randomSeed,
         tickCount                            : tickCount,
@@ -279,5 +274,4 @@ module.exports.getInstance = function (
         movementBonusFactorPerSkillLevel     : movementBonusFactorPerSkillLevel,
         magicalDamageAbsorptionPerSkillLevel : magicalDamageAbsorptionPerSkillLevel
     };
-
 };

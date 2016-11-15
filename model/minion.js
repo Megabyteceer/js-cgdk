@@ -1,9 +1,7 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-
 var LivingUnit = require('./living-unit.js');
-
 module.exports.getInstance = function (
     id,
     x,
@@ -23,7 +21,6 @@ module.exports.getInstance = function (
     cooldownTicks,
     remainingActionCooldownTicks
 ) {
-
     var ret = LivingUnit.getInstance(
         id,
         x,

@@ -1,9 +1,7 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-
 var LivingUnit = require('./living-unit.js');
-
 module.exports.getInstance = function (
     id,
     x,
@@ -31,7 +29,6 @@ module.exports.getInstance = function (
     isMaster,
     messages
 ) {
-
     var ret = LivingUnit.getInstance(
         id,
         x,
@@ -45,7 +42,6 @@ module.exports.getInstance = function (
         maxLife,
         statuses
     );
-
     ret.ownerPlayerId                  = ownerPlayerId;
     ret.isMe                           = isMe;
     ret.mana                           = mana;

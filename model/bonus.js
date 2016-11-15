@@ -1,9 +1,7 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-
 var CircularUnit = require('./circular-unit.js');
-
 module.exports.getInstance = function (
     id,
     x,

@@ -1,7 +1,6 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-
 module.exports.getInstance = function (
     tickIndex,
     tickCount,
@@ -15,7 +14,6 @@ module.exports.getInstance = function (
     buildings,
     trees
 ) {
-
     return {
         tickIndex   : tickIndex,
         tickCount   : tickCount,
@@ -29,5 +27,4 @@ module.exports.getInstance = function (
         buildings   : buildings,
         trees       : trees
     };
-
 };

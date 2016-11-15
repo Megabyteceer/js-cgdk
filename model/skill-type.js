@@ -1,7 +1,6 @@
 /**
  * Created by Megabyte on 11.11.2016.
  */
-
 module.exports = {
     RangeBonusPassive1              :  0,
     RangeBonusAura1                 :  1,
