@@ -115,6 +115,8 @@ var debugX,debugY;
 
 var __currentDebugText;
 
+
+var controlsInited = false;
 function drawMap() {
     debugText.length = 0;
 
@@ -138,27 +140,55 @@ function drawMap() {
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 4;
     ctx.strokeRect(0, 0, 4000, 4000);
-    world.buildings.some(drawBuilding);
-    world.trees.some(drawTree);
-    world.wizards.some(drawWizard);
-    world.projectiles.some(drawProjectile);
-    world.minions.some(drawUnit);
-    world.buildings.some(drawHp);
-    world.minions.some(drawHp);
-    world.wizards.some(drawHp);
-    world.wizards.some(drawMana);
-    drawWizard(self, 0, 0, '#08a');
+    if (world.buildings) {
+        world.buildings.some(drawBuilding);
+        world.trees.some(drawTree);
+        world.wizards.some(drawWizard);
+        world.projectiles.some(drawProjectile);
+        world.minions.some(drawUnit);
+        world.buildings.some(drawHp);
+        world.minions.some(drawHp);
+        world.wizards.some(drawHp);
+        world.wizards.some(drawMana);
+        drawWizard(self, 0, 0, '#08a');
+    }
+
+
+    if (!controlsInited && (typeof (selfX)!== 'undefined')) {
+        controlsInited = true;
+        var controls = $('#debug-controls');
+
+        var debugControls = ['walls', 'enemy base attraction', 'diagonal lane attraction', 'units on way', 'friends keep front', 'enemyDistance', 'pass minions'];
+        debugControls.some(function (n, i) {
+
+            var id = 'dc' + i;
+
+            debugCalcSteps[i] = getItem(id, true);
+
+            controls.append('<div id="' + id + '">' + n + ' <input ' + (debugCalcSteps[i] ? 'checked' : '') + ' type="checkbox" name="vehicle"></div>');
+            $('#' + id).on('click', function (e) {
+                e.preventDefault();
+                debugCalcSteps[i] = !debugCalcSteps[i];
+                setItem(id, debugCalcSteps[i]);
+                $('#' + id + ' input').attr('checked', debugCalcSteps[i]);
+                if (paused) {
+                    drawMap();
+                }
+            });
+        });
+    }
 
     if (typeof(selfX) !== 'undefined') {
 
-        var tx = selfX;
-        var ty = selfY;
-        selfX = debugX;
-        selfY = debugY;
-        getBestAngleToMove();
-        selfX = tx;
-        selfY = ty;
-
+        if (debugX) {
+            var tx = selfX;
+            var ty = selfY;
+            selfX = debugX;
+            selfY = debugY;
+            getBestAngleToMove();
+            selfX = tx;
+            selfY = ty;
+        }
 
         evaluatePointForMovingTo(debugX, debugY,1, true);
 
@@ -188,8 +218,17 @@ function drawWizard(unit, i, a, color) {
     ctx.stroke();
     ctx.beginPath();
     ctx.arc(unit.x, unit.y, unit.radius -10, unit.angle + 0.2, unit.angle - 0.2);
-
     ctx.stroke();
+
+    if(unit.remainingActionCooldownTicks<1){
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.beginPath();
+        ctx.arc(unit.x, unit.y, unit.radius -20, unit.angle + 0.2, unit.angle - 0.2);
+        ctx.fill();
+
+    }
+
+
 }
 
 
@@ -269,7 +308,7 @@ function highlightSingleUnit(u) {
 
 function  drawRelAngle(relAngle, color) {
     ctx.strokeStyle=color||"#999";
-    ctx.strokeWidth = 1;
+    ctx.strokeWidth = 0.5;
 
     ctx.beginPath();
     ctx.moveTo(selfX, selfY);

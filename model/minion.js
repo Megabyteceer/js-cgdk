@@ -1,7 +1,7 @@
 /**
  * Created by Megabyte on 10.11.2016.
  */
-var LivingUnit = require('./living-unit.js');
+var LivingUnit = require(__dirname+ '/living-unit.js');
 module.exports.getInstance = function (
     id,
     x,

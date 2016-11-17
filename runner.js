@@ -1,8 +1,22 @@
 /**
  * Created by Megabyte on 09.11.2016.
  */
+
+
+
+if(process.argv[5] !== './test/http-proxy-strategy.js') {
+    var Module = require('module');
+    var originalRequire = Module.prototype.require;
+    Module.prototype.require = function (moduleName) {
+        if (moduleName.indexOf('fs') === moduleName.length-2) {
+            throw 'fs is disabled';
+        }
+        return originalRequire(moduleName);
+    }
+}
+
 var token = process.argv[4] || "0000000000000000";
-var RemoteProcessClient = require('./remote-process-client.js');
+var RemoteProcessClient = require(__dirname+'/remote-process-client.js');
 var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2] || '127.0.0.1', process.argv[3] || 31001, function onServerConnect() {
     if (MyStrategy.onLocalRunnerConnected) {
         MyStrategy.onLocalRunnerConnected();

@@ -3,6 +3,7 @@
  */
 "use strict";
 
+var __dirname = '';
 var module = {exports: {}};
 function require(name) {
     /*mocked*/
@@ -13,7 +14,7 @@ var lastPackedProcessed;
 var maxPackedProcessed = 0;
 var debugCalcSteps=[];
 
-var world;
+var world={};
 
 
 (function () {
@@ -28,28 +29,7 @@ var world;
     });
 
 
-    if (typeof (selfX)!== 'undefined') {
-        var controls = $('#debug-controls');
 
-        var debugControls = ['walls', 'enemy base attraction', 'diagonal lane attraction', 'units on way', 'friends keep front', 'enemyDistance'];
-        debugControls.some(function (n, i) {
-
-            var id = 'dc' + i;
-
-            debugCalcSteps[i] = getItem(id, true);
-
-            controls.append('<div id="' + id + '">' + n + ' <input ' + (debugCalcSteps[i] ? 'checked' : '') + ' type="checkbox" name="vehicle"></div>');
-            $('#' + id).on('click', function (e) {
-                e.preventDefault();
-                debugCalcSteps[i] = !debugCalcSteps[i];
-                setItem(id, debugCalcSteps[i]);
-                $('#' + id + ' input').attr('checked', debugCalcSteps[i]);
-                if (paused) {
-                    drawMap();
-                }
-            });
-        });
-    }
 
     function doPause() {
         if (!paused) {
@@ -196,7 +176,12 @@ var world;
         }
     }, 100);
     var busy;
+    
     function processFrame(packetNum) {
+
+       
+
+
         if (!packetNum) {
             packetNum = -1;
         }
@@ -212,15 +197,15 @@ var world;
             if (data.game) {
                 game = data.game;
             }
-            world = data.world;
-            world.wizards = world.wizards.map(parseWizard);
-            world.trees = world.trees.map(parseTree);
-            world.projectiles = world.projectiles.map(parseProjectile);
-            world.players = world.players.map(parsePlayer);
-            world.minions = world.minions.map(parseMinion);
-            world.buildings = world.buildings.map(parseBuilding);
-            world.bonuses = world.bonuses.map(parseBonus);
-            world.myPlayer = parseWizard(world.myPlayer);
+            var _world = data.world;
+            world.wizards = _world.wizards.map(parseWizard);
+            world.trees = _world.trees.map(parseTree);
+            world.projectiles = _world.projectiles.map(parseProjectile);
+            world.players = _world.players.map(parsePlayer);
+            world.minions = _world.minions.map(parseMinion);
+            world.buildings = _world.buildings.map(parseBuilding);
+            world.bonuses = _world.bonuses.map(parseBonus);
+            world.myPlayer = parseWizard(_world.myPlayer);
 
             var move = Move.getInstance();
             drawMap();

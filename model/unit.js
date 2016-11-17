@@ -4,8 +4,10 @@
 
 var pool = {};
 var getAngleTo = function (x, y) {
-    if(typeof x === 'number') return Math.atan2(y - this.y, x - this.x) - this.angle;
-    else return Math.atan2(x.y - this.y, x.x - this.x) - this.angle;
+    if(typeof x === 'number')
+        return Math.atan2(y - this.y, x - this.x) - this.angle;
+    else
+        return Math.atan2(x.y - this.y, x.x - this.x) - this.angle;
 };
 var getDistanceTo = function (x, y) {
     var dx, dy;

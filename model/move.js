@@ -2,8 +2,8 @@
  * Created by Megabyte on 10.11.2016.
  */
 "use strict";
-var ActionType = require('./action-type.js');
-var Message = require('./message.js');
+var ActionType = require(__dirname+ '/action-type.js');
+var Message = require(__dirname+ '/message.js');
 module.exports.getInstance = function () {
     
     var _speed           = 0;
