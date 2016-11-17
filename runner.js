@@ -4,7 +4,7 @@
 
 
 
-if(process.argv[5] !== './test/http-proxy-strategy.js') {
+if (process.argv[6] === 'disable-fs') {
     var Module = require('module');
     var originalRequire = Module.prototype.require;
     Module.prototype.require = function (moduleName) {
@@ -12,7 +12,8 @@ if(process.argv[5] !== './test/http-proxy-strategy.js') {
             throw 'fs is disabled';
         }
         return originalRequire(moduleName);
-    }
+    };
+    console.log('fs module disabled');
 }
 
 var token = process.argv[4] || "0000000000000000";
