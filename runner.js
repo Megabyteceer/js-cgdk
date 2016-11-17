@@ -9,11 +9,15 @@ if (process.argv[6] === 'disable-fs') {
     var originalRequire = Module.prototype.require;
     Module.prototype.require = function (moduleName) {
         if (moduleName.indexOf('fs') === moduleName.length-2) {
-            throw 'fs is disabled';
+            throw '"fs" is disabled';
+        } else if (moduleName.indexOf('child_process') === moduleName.length-13) {
+            throw '"child_process" is disabled';
+        } else {
+            return originalRequire(moduleName);
         }
-        return originalRequire(moduleName);
+
     };
-    console.log('fs module disabled');
+    console.log('"fs" module disabled');
 }
 
 var token = process.argv[4] || "0000000000000000";
