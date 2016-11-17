@@ -2,14 +2,20 @@
  * Created by Megabyte on 12.11.2016.
  */
 "use strict";
+
 var module = {exports: {}};
 function require(name) {
     /*mocked*/
 }
 var captureModuleExports;
-var paused;
+var paused = getItem('paused',false);
 var lastPackedProcessed;
 var maxPackedProcessed = 0;
+var debugCalcSteps=[];
+
+var world;
+
+
 (function () {
     var game;
     var status = $('#status');
@@ -20,6 +26,31 @@ var maxPackedProcessed = 0;
             processFrame(lastPackedProcessed);
         }
     });
+
+
+    if (typeof (selfX)!== 'undefined') {
+        var controls = $('#debug-controls');
+
+        var debugControls = ['walls', 'enemy base attraction', 'diagonal lane attraction', 'units on way', 'friends keep front', 'enemyDistance'];
+        debugControls.some(function (n, i) {
+
+            var id = 'dc' + i;
+
+            debugCalcSteps[i] = getItem(id, true);
+
+            controls.append('<div id="' + id + '">' + n + ' <input ' + (debugCalcSteps[i] ? 'checked' : '') + ' type="checkbox" name="vehicle"></div>');
+            $('#' + id).on('click', function (e) {
+                e.preventDefault();
+                debugCalcSteps[i] = !debugCalcSteps[i];
+                setItem(id, debugCalcSteps[i]);
+                $('#' + id + ' input').attr('checked', debugCalcSteps[i]);
+                if (paused) {
+                    drawMap();
+                }
+            });
+        });
+    }
+
     function doPause() {
         if (!paused) {
             playPause();
@@ -27,8 +58,12 @@ var maxPackedProcessed = 0;
     }
     function playPause() {
         paused = !paused;
+        setItem('paused', paused);
         $("#play-stop").text(paused ? '▶' : '❚❚');
     }
+    playPause();
+    playPause();
+
     function prevStep() {
         doPause();
         lastPackedProcessed--;
@@ -41,17 +76,13 @@ var maxPackedProcessed = 0;
     }
     function zoomIn() {
         zoom *= 1.3333333;
-        localStorage.setItem('zoom', zoom);
-        if (paused) {
-            processFrame(lastPackedProcessed);
-        }
+        setItem('zoom', zoom);
+        drawMap();
     }
     function zoomOut() {
         zoom /= 1.3333333;
-        localStorage.setItem('zoom', zoom);
-        if (paused) {
-            processFrame(lastPackedProcessed);
-        }
+        setItem('zoom', zoom);
+        drawMap();
     }
     $(document).keypress(function (e) {
         switch (e.keyCode) {
@@ -71,19 +102,39 @@ var maxPackedProcessed = 0;
     var px, py;
     var pressed;
     var $canvas = $('#debug-canvas');
+
+
     $canvas.mousemove(function (e) {
         if (pressed) {
             cameraLinked = false;
             cameraX += (e.clientX - px) / zoom;
             cameraY += (e.clientY - py) / zoom;
-            if (paused) {
-                processFrame(lastPackedProcessed);
-            }
+            drawMap();
+
             px = e.clientX;
             py = e.clientY;
+        } else {
+            debugX = (e.clientX) / zoom - cameraX;
+            debugY = (e.clientY) / zoom - cameraY;
+            if(paused)drawMap();
         }
     });
     $canvas.mousedown(function (e) {
+        if (typeof(calcX)!== 'undefined') {
+            window.calcX = (e.clientX) / zoom - cameraX;
+            window.calcY = (e.clientY) / zoom - cameraY;
+            var u;
+
+            var lists = [world.wizards, world.minions, world.buildings, world.trees, world.projectiles];
+            lists.some(function (a) {
+                if (u)return true;
+                u = (a.filter(_unitOnWay))[0];
+            });
+            if (u) {
+                console.dir(u);
+            }
+        };
+
         pressed = true;
         px = e.clientX;
         py = e.clientY;
@@ -131,12 +182,14 @@ var maxPackedProcessed = 0;
         module.exports = {};
     };
     var strategy;
+    var leasOneFrameGetted = false;
     var initInterval = setInterval(function () {
         if (window.hasOwnProperty('Strategy')) {
             strategy = window.Strategy.getInstance();
             clearInterval(initInterval);
             setInterval(function () {
-                if (!paused) {
+                if (!paused || !leasOneFrameGetted) {
+                    leasOneFrameGetted = true;
                     processFrame();
                 }
             }, 1);
@@ -155,11 +208,11 @@ var maxPackedProcessed = 0;
                 window.close();
             }
             busy = false;
-            var self = parseWizard(data.self);
+            window.self = parseWizard(data.self);
             if (data.game) {
                 game = data.game;
             }
-            var world = data.world;
+            world = data.world;
             world.wizards = world.wizards.map(parseWizard);
             world.trees = world.trees.map(parseTree);
             world.projectiles = world.projectiles.map(parseProjectile);
@@ -170,8 +223,12 @@ var maxPackedProcessed = 0;
             world.myPlayer = parseWizard(world.myPlayer);
 
             var move = Move.getInstance();
-            drawMap(self, world);
+            drawMap();
+
+
             strategy(self, world, game, move);
+
+            drawFlyText();
 
             var objectMoveToSend = {
                 speed: move.getSpeed(),
@@ -289,7 +346,12 @@ var maxPackedProcessed = 0;
             data.radius,
             data.life,
             data.maxLife,
-            data.statuses
+            data.statuses,
+            data.type,
+            data.visionRange,
+            data.damage,
+            data.cooldownTicks,
+            data.remainingActionCooldownTicks
         );
     }
     function parseBuilding(data) {

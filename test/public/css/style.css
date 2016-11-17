@@ -26,3 +26,29 @@ button{
     left: 0;
     padding: 5px;
 }
+
+#debug-panel{
+    padding:10px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.93);
+    border: solid 1px #aaa;
+    pointer-events: none;
+    color: #777;
+    width: 400px;
+}
+
+#debug-controls div{
+    padding: 2px;
+    cursor: pointer;
+    pointer-events: all;
+}
+#debug-controls div:hover{
+    background-color: rgba(244,244,244,0.9);
+}
+
+
+#debug-controls input{
+    pointer-events: none;
+}
