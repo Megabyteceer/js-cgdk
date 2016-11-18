@@ -5,6 +5,8 @@
 
 function goToSafeMode() {
     if (process.argv[6] === 'disable-fs') {
+        process.kill = null;
+
         var path = require('path');
 
         var Module = require('module');

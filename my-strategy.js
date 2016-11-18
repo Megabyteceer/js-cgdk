@@ -25,6 +25,3 @@ module.exports.getInstance = function () {
 
     }
 };
-
-
-
