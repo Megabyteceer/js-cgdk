@@ -3,22 +3,31 @@
  */
 
 
+function goToSafeMode() {
+    if (process.argv[6] === 'disable-fs') {
+        var path = require('path');
 
-if (process.argv[6] === 'disable-fs') {
-    var Module = require('module');
-    var originalRequire = Module.prototype.require;
-    Module.prototype.require = function (moduleName) {
-        if (moduleName.indexOf('fs') === moduleName.length-2) {
-            throw '"fs" is disabled';
-        } else if (moduleName.indexOf('child_process') === moduleName.length-13) {
-            throw '"child_process" is disabled';
-        } else {
+        var Module = require('module');
+        var originalRequire = Module.prototype.require;
+        Module.prototype.require = function (moduleName) {
+
+            if (moduleName.indexOf(__dirname)!==0) {
+                moduleName = path.resolve(__dirname, moduleName);
+            } else {
+                moduleName = path.resolve(moduleName);
+            }
+
+            if (moduleName.indexOf(__dirname)!==0) {
+                throw moduleName+'; Modules import is restricted. Use require(__dirname+"/module.js") to import any modules. Ипорт модулей ограничен. Используйте (__dirname+"/module.js") для импорта модулей.';
+            }
+
             return originalRequire(moduleName);
-        }
 
-    };
-    console.log('"fs" module disabled');
+        };
+        console.log('"fs" module disabled');
+    }
 }
+
 
 var token = process.argv[4] || "0000000000000000";
 var RemoteProcessClient = require(__dirname+'/remote-process-client.js');
@@ -40,8 +49,12 @@ var remoteProcessClient = new RemoteProcessClient.connect(process.argv[2] || '12
 var strategies = [];
 var teamSize;
 var game;
-var MyStrategy = require(process.argv[5] || './my-strategy.js');
 var Move = require('./model/move.js');
+
+goToSafeMode();
+
+var MyStrategy = require(__dirname+'/'+(process.argv[5] || './my-strategy.js'));
+
 var isCallbackedStrategy = false;
 var moves;
 function run() {
@@ -99,6 +112,7 @@ function afterAllStrategyProcessed() {
 }
 var callBackCount;
 function callStrategy(wizardIndex, playerWizard, world, game, move) {
+
     if (isCallbackedStrategy) {
         callBackCount++;
         strategies[wizardIndex](playerWizard, world, game, move, function (returnedMove) {
