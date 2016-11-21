@@ -5,16 +5,17 @@
 var pool = {};
 var getAngleTo = function (x, y) {
 	var a;
-    if(typeof x === 'number'){
-        a = Math.atan2(y - this.y, x - this.x) - this.angle;
-    } else {
-        a = Math.atan2(x.y - this.y, x.x - this.x) - this.angle;
+	if (typeof x === 'number') {
+		a = Math.atan2(y - this.y, x - this.x) - this.angle;
+	} else {
+		a = Math.atan2(x.y - this.y, x.x - this.x) - this.angle;
 	}
 	if (a < -Math.PI) {
 		return a + 2 * Math.PI
 	} else if (a > Math.PI) {
 		return a - 2 * Math.PI
 	}
+    return a;
 };
 var getDistanceTo = function (x, y) {
     var dx, dy;
