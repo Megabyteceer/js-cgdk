@@ -12,7 +12,7 @@ var getAngleTo = function (x, y) {
 	}
 	if (a < -Math.PI) {
 		return a + 2 * Math.PI
-	} else if (angle > Math.PI) {
+	} else if (a > Math.PI) {
 		return a - 2 * Math.PI
 	}
 };
