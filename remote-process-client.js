@@ -202,9 +202,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         });
     }
     function readFixedByteArray(len, callback) {
-        if (len > 100) {
-            throw( 'too big len');
-        }
+      
         readSequence(len, function onFixedByteArrayReaded(a) {
             callback(a[0]);
         });
@@ -213,9 +211,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         
         readInt(function readByteArrayf1(len) {
             
-            if (len > 100) {
-                throw( 'too big len');
-            }
+ 
             if (len < 0) {
                 callback(null);
             } else if (len === 0) {
