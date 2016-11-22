@@ -13,8 +13,12 @@ module.exports.getInstance = function (
     rawMessage
 ) {
     
-    LaneType.validate(lane);
-    SkillType.validate(skillToLearn);
+    if(lane !== null) {
+        LaneType.validate(lane);
+    }
+    if (skillToLearn !== null) {
+        SkillType.validate(skillToLearn);
+    }
     
     if(!Array.isArray(rawMessage)) throw "rawMessage: Array expected";
     
