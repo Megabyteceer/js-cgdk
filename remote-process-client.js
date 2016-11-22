@@ -434,7 +434,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 readEnum(function readMessagef2(v1) {
                     readEnum(function readMessagef3(v2) {
                         readByteArray(false, function f4(bytes) {
-                            var message = Message.getInstance.apply(undefined, v1, v2, bytes);
+                            var message = Message.getInstance(v1, v2, bytes);
                             callback(message);
                         })
                     })
