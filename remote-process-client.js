@@ -210,9 +210,9 @@ module.exports.connect = function connect(host, port, onConnect) {
         });
     }
     function readByteArray(nullable, callback) {
-        console.log('readByteArray: ' + arguments.callee.name);
+        
         readInt(function readByteArrayf1(len) {
-            console.log(len);
+            
             if (len > 100) {
                 throw( 'too big len');
             }
