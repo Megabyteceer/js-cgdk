@@ -76,6 +76,7 @@ function run() {
 }
 function handleGameFrame(playerContext) {
     if (!playerContext) {
+		remoteProcessClient.close();
         process.exit(1);
     }
     var playerWizards = playerContext.wizards;

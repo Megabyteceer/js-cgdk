@@ -3,6 +3,10 @@
  */
 var Move = require('./../model/move.js');
 
+require('./compile.js');
+
+var strategyProd = require('../megabyte-strategy-prod.js').getInstance();
+
 var PORT = 25643;
 try {
     var express = require('express');
@@ -29,6 +33,10 @@ app.get('/', function (req, res) {
     }
 });
 
+app.get('/snapshots.JSON', function (req, res) {
+    res.sendFile('snapshots.JSON', {root: __dirname + "/public/"});
+});
+
 var responseObject;
 var requestedPacket;
 function answerPacket() {
@@ -36,7 +44,7 @@ function answerPacket() {
     if (jsonPpacketsToProcess[pn]) {
         responseObject.end(jsonPpacketsToProcess[pn]);
     } else {
-        setTimeout(answerPacket, 1);
+        responseObject.end();
     }
 }
 
@@ -49,7 +57,7 @@ app.get('/packet.JSON/:packetNum', function (req, res) {
 
 app.post('/move', function (req, res) {
     if (currentPacket === req.body.packetNum) {
-        currentPacket++;
+        
 
         var move = Move.getInstance();
         try {
@@ -74,17 +82,81 @@ app.post('/move', function (req, res) {
             console.log(JSON.stringify(req.body));
             var move = Move.getInstance();
         }
+		
+		var checkField = function(name){
+			if (Math.abs(req.body[name]- prodAnswers[currentPacket][name]) < 0.00001) {
+				prodAnswers[currentPacket][name] = req.body[name];
+			} else {
+				messageForClient += ' different value '+name+': '+req.body[name] +' / '+prodAnswers[currentPacket][name];
+			}
+			
+		}
+		checkField('speed');
+		checkField('strafeSpeed');
+		checkField('turn');
+		checkField('minCastDistance');
+		checkField('maxCastDistance');
+		checkField('castAngle');
+		
+		
+		
+		
+		if (JSON.stringify(req.body) !== JSON.stringify(prodAnswers[currentPacket])) {
+			console.log('PROD and DEV strtaegies return differerent movements');
+			messageForClient += 'PROD and DEV strtaegies return differerent movements ' + JSON.stringify(prodAnswers[currentPacket])+JSON.stringify(req.body);
+		} else {
+			//messageForClient += 'PROD and DEV same ' + prodAnswers[currentPacket];
+		}
+		
+		currentPacket++;
         packetsGetterCallback(move);
+		
     }
+    res.end(messageForClient);
+	messageForClient = undefined;
+});
+
+var fs = require('fs');
+
+function getSnapshots() {
+	
+	if (fs.existsSync(__dirname+'/public/snapshots.JSON')) {
+	
+		var src = fs.readFileSync(__dirname+'/public/snapshots.JSON', 'utf8');
+		if (!src) {
+			return [];
+		}
+		return JSON.parse(src);
+	} else {
+		return [];
+	}
+}
+
+function saveSnapshots(snapshots) {
+	fs.writeFileSync(__dirname+'/public/snapshots.JSON', JSON.stringify(snapshots), 'utf8');
+}
+
+app.post('/snapshot', function (req, res) {
+	var snapshots = getSnapshots();
+	snapshots.push(req.body);
+	saveSnapshots(snapshots);
     res.end();
 });
+
+
+
+
 app.listen(PORT, function () {
     console.log('Example app listening on port ' + PORT + '!');
     console.log('To start visual debugging open this url in your contemporary browser: http://localhost:' + PORT);
     urlOpener('http://localhost:' + PORT);
 });
 var jsonPpacketsToProcess = [];
+var prodAnswers = [];
 var packetsGetterCallback;
+
+var messageForClient;
+
 module.exports.getInstance = function () {
     //private strategy variables here;
     return function move(self, world, game, move, callback) {
@@ -96,6 +168,32 @@ module.exports.getInstance = function () {
             game: game
         };
         jsonPpacketsToProcess.push(JSON.stringify(packetToProcess));
+		
+		var prodMove = Move.getInstance();
+		
+		try {
+			strategyProd(self,world,game, prodMove);
+		} catch(e){
+			
+			messageForClient += "ERROR IN PROD strategy: "+e;
+		};
+		
+		var objectMoveToSend = {
+			speed: prodMove.getSpeed(),
+			strafeSpeed: prodMove.getStrafeSpeed(),
+			turn: prodMove.getTurn(),
+			action: prodMove.getAction(),
+			castAngle: prodMove.getCastAngle(),
+			minCastDistance: prodMove.getMinCastDistance(),
+			maxCastDistance: prodMove.getMaxCastDistance(),
+			statusTargetId: prodMove.getStatusTargetId(),
+			skillToLearn: prodMove.getSkillToLearn(),
+			messages: prodMove.getMessages(),
+			packetNum: prodAnswers.length
+		};
+		
+		prodAnswers.push(objectMoveToSend);
+		
     }
 };
 var localRunnerConnected;

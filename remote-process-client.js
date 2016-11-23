@@ -15,6 +15,7 @@ const Building = require('./model/building.js');
 const Tree = require('./model/tree.js');
 const SkillType = require('./model/skill-type.js');
 
+
 module.exports.connect = function connect(host, port, onConnect) {
 
     const net = require('net');
@@ -23,7 +24,7 @@ module.exports.connect = function connect(host, port, onConnect) {
     var answer = [];
     var busy;
     var remainder;
-    const client = net.connect(port, host, function connectHandler() {
+    var client = net.connect(port, host, function connectHandler() {
         // 'connect' listener
         console.log('connected to server!');
         onConnect();
@@ -202,20 +203,15 @@ module.exports.connect = function connect(host, port, onConnect) {
         });
     }
     function readFixedByteArray(len, callback) {
-        if (len > 100) {
-            throw( 'too big len');
-        }
         readSequence(len, function onFixedByteArrayReaded(a) {
             callback(a[0]);
         });
     }
     function readByteArray(nullable, callback) {
-        console.log('readByteArray: ' + arguments.callee.name);
+
         readInt(function readByteArrayf1(len) {
-            console.log(len);
-            if (len > 100) {
-                throw( 'too big len');
-            }
+
+
             if (len < 0) {
                 callback(null);
             } else if (len === 0) {
@@ -438,7 +434,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 readEnum(function readMessagef2(v1) {
                     readEnum(function readMessagef3(v2) {
                         readByteArray(false, function f4(bytes) {
-                            var message = Message.getInstance.apply(undefined, v1, v2, bytes);
+                            var message = Message.getInstance( v1, v2, bytes);
                             callback(message);
                         })
                     })
@@ -679,6 +675,14 @@ module.exports.connect = function connect(host, port, onConnect) {
         writeInt(moves.length);
         moves.some(writeMove);
     }
+	
+	this.close = function close() {
+		try {
+			client.close();
+		} catch (e) {
+			console.log(e);
+		}
+	}
 
 };
 

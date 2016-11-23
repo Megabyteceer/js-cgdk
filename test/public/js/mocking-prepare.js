@@ -16,6 +16,7 @@ var debugCalcSteps=[];
 
 var world={};
 
+var doPause;
 
 (function () {
     var game;
@@ -28,10 +29,14 @@ var world={};
         }
     });
 
+	var doOneStep = false;
+	
+	function unitAtPoint(u){
+		if( u.getDistanceTo(calcX, calcY) < u.radius) return u;
+		
+	}
 
-
-
-    function doPause() {
+    doPause = function () {
         if (!paused) {
             playPause();
         }
@@ -47,11 +52,13 @@ var world={};
     function prevStep() {
         doPause();
         lastPackedProcessed--;
+		doOneStep = true;
         processFrame(lastPackedProcessed);
     }
     function nextStep() {
         doPause();
         lastPackedProcessed++;
+		doOneStep = true;
         processFrame(lastPackedProcessed);
     }
     function zoomIn() {
@@ -89,15 +96,17 @@ var world={};
             cameraLinked = false;
             cameraX += (e.clientX - px) / zoom;
             cameraY += (e.clientY - py) / zoom;
-            drawMap();
+           
 
             px = e.clientX;
             py = e.clientY;
         } else {
             debugX = (e.clientX) / zoom - cameraX;
             debugY = (e.clientY) / zoom - cameraY;
-            if(paused)drawMap();
+            
         }
+		if(paused)drawMap();
+		
     });
     $canvas.mousedown(function (e) {
         if (typeof(calcX)!== 'undefined') {
@@ -108,7 +117,7 @@ var world={};
             var lists = [world.wizards, world.minions, world.buildings, world.trees, world.projectiles];
             lists.some(function (a) {
                 if (u)return true;
-                u = (a.filter(_unitOnWay))[0];
+                u = a.find(unitAtPoint);
             });
             if (u) {
                 console.dir(u);
@@ -136,6 +145,29 @@ var world={};
         processFrame(lastPackedProcessed);
     });
 
+	
+	$("#take-snapshot").on("click", function () {
+        
+		if(prompt('A you sure you want to add scene to test snapshots list?')) {
+			
+			$.ajax({
+				type: "POST",
+				url: '/snapshot',
+				data: JSON.stringify(lastProcessedPackageData),
+				success: function (d) {
+					if (d) {
+						alert(d);
+						
+					}
+				},
+				contentType: "application/json; charset=utf-8"
+			});
+		}
+    });
+
+	
+	
+	
     function getParameterByName(name, url) {
         if (!url) {
             url = window.location.href;
@@ -161,10 +193,12 @@ var world={};
         }
         module.exports = {};
     };
+
     var strategy;
     var leasOneFrameGetted = false;
     var initInterval = setInterval(function () {
         if (window.hasOwnProperty('Strategy')) {
+
             strategy = window.Strategy.getInstance();
             clearInterval(initInterval);
             setInterval(function () {
@@ -177,6 +211,55 @@ var world={};
     }, 100);
     var busy;
     
+	function parseDataToWorld(data) {
+		
+		window.self = parseWizard(data.self);
+		if (data.game) {
+			game = data.game;
+		}
+		var _world = data.world;
+		world.wizards = _world.wizards.map(parseWizard);
+		world.trees = _world.trees.map(parseTree);
+		world.projectiles = _world.projectiles.map(parseProjectile);
+		world.players = _world.players.map(parsePlayer);
+		world.minions = _world.minions.map(parseMinion);
+		world.buildings = _world.buildings.map(parseBuilding);
+		world.bonuses = _world.bonuses.map(parseBonus);
+		world.myPlayer = parseWizard(_world.myPlayer);
+
+		
+	}
+	
+	function makeMovement(data) {
+		
+		parseDataToWorld(data);
+		var move = Move.getInstance();
+		
+		strategy(self, world, game, move);
+		
+		var objectMoveToSend = {
+			speed: move.getSpeed(),
+			strafeSpeed: move.getStrafeSpeed(),
+			turn: move.getTurn(),
+			action: move.getAction(),
+			castAngle: move.getCastAngle(),
+			minCastDistance: move.getMinCastDistance(),
+			maxCastDistance: move.getMaxCastDistance(),
+			statusTargetId: move.getStatusTargetId(),
+			skillToLearn: move.getSkillToLearn(),
+			messages: move.getMessages(),
+			packetNum: data.packetNum
+		};
+				
+		if (objectMoveToSend.speed === null)throw 'wrong value';
+			
+		return objectMoveToSend;
+		
+	}
+	
+	
+	var lastProcessedPackageData;
+	
     function processFrame(packetNum) {
 
        
@@ -188,62 +271,42 @@ var world={};
         if (busy)return;
         busy = true;
         $.getJSON('packet.JSON/' + packetNum, function (data) {
+			busy = false;
+            
+			if (!data) {
+				return;
+			}
             if (data === 'close-window') {
                 return;
                 window.close();
             }
-            busy = false;
-            window.self = parseWizard(data.self);
-            if (data.game) {
-                game = data.game;
-            }
-            var _world = data.world;
-            world.wizards = _world.wizards.map(parseWizard);
-            world.trees = _world.trees.map(parseTree);
-            world.projectiles = _world.projectiles.map(parseProjectile);
-            world.players = _world.players.map(parsePlayer);
-            world.minions = _world.minions.map(parseMinion);
-            world.buildings = _world.buildings.map(parseBuilding);
-            world.bonuses = _world.bonuses.map(parseBonus);
-            world.myPlayer = parseWizard(_world.myPlayer);
-
-            var move = Move.getInstance();
-            drawMap();
-
-
-            strategy(self, world, game, move);
-
-            drawFlyText();
-
-            var objectMoveToSend = {
-                speed: move.getSpeed(),
-                strafeSpeed: move.getStrafeSpeed(),
-                turn: move.getTurn(),
-                action: move.getAction(),
-                castAngle: move.getCastAngle(),
-                minCastDistance: move.getMinCastDistance(),
-                maxCastDistance: move.getMaxCastDistance(),
-                statusTargetId: move.getStatusTargetId(),
-                skillToLearn: move.getSkillToLearn(),
-                messages: move.getMessages(),
-                packetNum: data.packetNum
-            };
-            if (objectMoveToSend.speed === null)throw 'wrong value';
+            
+			var objectMoveToSend = makeMovement(data);
+			
+			drawFlyText();
+			
             lastPackedProcessed = data.packetNum;
             maxPackedProcessed = Math.max(lastPackedProcessed, maxPackedProcessed);
             status.text('step: ' + lastPackedProcessed);
-            $.ajax({
-                type: "POST",
-                url: '/move',
-                data: JSON.stringify(objectMoveToSend),
-                success: function (d) {
-                    if (d) {
-                        alert(d);
-                        doPause();
-                    }
-                },
-                contentType: "application/json; charset=utf-8"
-            });
+			
+			data.makedMove = objectMoveToSend;
+			lastProcessedPackageData = data;
+			
+			if (!paused || doOneStep) {
+				doOneStep = false;
+				$.ajax({
+					type: "POST",
+					url: '/move',
+					data: JSON.stringify(objectMoveToSend),
+					success: function (d) {
+						if (d) {
+							alert(d);
+							
+						}
+					},
+					contentType: "application/json; charset=utf-8"
+				});
+			}
         });
     }
     function parseWizard(data) {
@@ -375,4 +438,20 @@ var world={};
             data.type
         );
     }
+	
+	busy = true;
+	$.getJSON('/snapshots.JSON', function(snapshots) {
+		/*
+		snapshot.some(function s) {
+			var move = makeMovement(s);
+			if(Math.abs(move.speed -s.makedMovement.speed) > 0.01){
+				throw
+			}
+			
+			
+		}*/
+		busy = false;
+	});
+	
+	
 })();

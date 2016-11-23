@@ -52,3 +52,8 @@ button{
 #debug-controls input{
     pointer-events: none;
 }
+
+#take-snapshot{
+	color:#900;
+	
+}
