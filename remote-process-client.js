@@ -15,6 +15,7 @@ const Building = require('./model/building.js');
 const Tree = require('./model/tree.js');
 const SkillType = require('./model/skill-type.js');
 
+var clientPaused;
 
 module.exports.connect = function connect(host, port, onConnect) {
 
@@ -131,9 +132,24 @@ module.exports.connect = function connect(host, port, onConnect) {
             } else {
                 remainder = data;
             }
+			if(remainder.length > 1000000){
+				if(!clientPaused){
+					client.pause();
+					var pauseInterval = setInterval(function(){
+						if (remainder.length < 100000) {
+							clearInterval(pauseInterval);
+							clientPaused = false;
+							client.resume();
+						}
+					},100);
+					clientPaused = true;
+				}
+			}
+			
         } else {
             remainder = null;
         }
+		
         busy = false;
     }
     client.on('data', dataHandler);
@@ -144,7 +160,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 
     client.on('close', function onClose() {
         console.log('server closed connection.');
-        process.exit(1);
+        process.exit();
     });
     client.on('end', function onEnd() {
         console.log('disconnected from server');
@@ -203,14 +219,13 @@ module.exports.connect = function connect(host, port, onConnect) {
         });
     }
     function readFixedByteArray(len, callback) {
+
         readSequence(len, function onFixedByteArrayReaded(a) {
             callback(a[0]);
         });
     }
     function readByteArray(nullable, callback) {
-
         readInt(function readByteArrayf1(len) {
-
 
             if (len < 0) {
                 callback(null);
@@ -427,6 +442,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         readArrayOfElements(readWizard, callback);
     }
     function readMessage(callback) {
+		console.log('read message');
         readBool(function readMessagef1(val) {
             if (!val) {
                 callback(null);
@@ -434,6 +450,7 @@ module.exports.connect = function connect(host, port, onConnect) {
                 readEnum(function readMessagef2(v1) {
                     readEnum(function readMessagef3(v2) {
                         readByteArray(false, function f4(bytes) {
+							console.log(v1, v2, bytes);
                             var message = Message.getInstance( v1, v2, bytes);
                             callback(message);
                         })
