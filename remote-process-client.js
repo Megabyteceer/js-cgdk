@@ -160,6 +160,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 
     client.on('close', function onClose() {
         console.log('server closed connection.');
+		client.unref();
         process.exit();
     });
     client.on('end', function onEnd() {
@@ -391,6 +392,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 
         readEnum(function readPlayerContextMessagef1(messageType) {
             if (messageType === MessageType.GameOver) {
+				this.close();
                 process.exit(0);
             } else {
                 ensureMessageType(messageType, MessageType.PlayerContext);
@@ -695,7 +697,9 @@ module.exports.connect = function connect(host, port, onConnect) {
 	
 	this.close = function close() {
 		try {
+			client.unref();
 			client.close();
+			cllient.destroy();
 		} catch (e) {
 			console.log(e);
 		}
