@@ -31,7 +31,7 @@ module.exports.connect = function connect(host, port, onConnect) {
         onConnect();
     });
     client.setNoDelay();
-	client.unref();
+	
     function dataHandler(data) {
         if (data) {
             if (remainder) {
@@ -160,6 +160,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 
     client.on('close', function onClose() {
         console.log('server closed connection.');
+		client.unref();
         process.exit();
     });
     client.on('end', function onEnd() {
@@ -696,6 +697,7 @@ module.exports.connect = function connect(host, port, onConnect) {
 	
 	this.close = function close() {
 		try {
+			client.unref();
 			client.close();
 			cllient.destroy();
 		} catch (e) {
