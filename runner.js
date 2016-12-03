@@ -99,8 +99,7 @@ function handleGameFrame(playerContext) {
                 try {
                     callStrategy(wizardIndex, playerWizard, playerContext.world, game, move);
                 } catch (e) {
-                    console.log('ERROR: ' + e.message);
-		    console.log('ERROR: ' + e.stack);
+		    console.log(e.stack);
                     process.exit(1);
                 }
             }
